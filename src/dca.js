@@ -7,6 +7,7 @@ import {
   ASSOCIATED_TOKEN_PROGRAM_ID,
 } from "@solana/spl-token";
 import { connection, walletPublicKey, isSimulation } from "./wallet.js";
+import { jupiterFetch } from "./jupiter.js";
 
 // Mainnet USDC
 const USDC_MINT = new PublicKey("EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v");
@@ -59,8 +60,8 @@ async function ensureUSDCAta() {
 }
 
 /**
- * Fetch open DCA orders for the connected wallet.
- * Uses getCurrentByUser (memcmp filter) — not getAll() which would fetch every order on-chain.
+ * Fetch open DCA orders via Jupiter Recurring API, normalised to our display shape.
+ * Falls back to the on-chain SDK if the API call fails (e.g. missing API key).
  * In simulation mode returns a single mock order.
  */
 export async function fetchDCAOrders() {
@@ -68,24 +69,51 @@ export async function fetchDCAOrders() {
 
   if (isSimulation) {
     const now = Math.floor(Date.now() / 1000);
-    return [
-      {
-        publicKey: { toBase58: () => "SIM_DCA_DEMO" },
-        account: {
-          inputMint: USDC_MINT,
-          outputMint: SOL_MINT,
-          inAmountPerCycle: { toNumber: () => 250_000 },   // 0.25 USDC
-          inDeposited:      { toNumber: () => 1_000_000 }, // 1 USDC total
-          inUsed:           { toNumber: () => 250_000 },   // 1 cycle done
-          outReceived:      { toNumber: () => 3_500_000 }, // ~0.0035 SOL
-          nextCycleAt:      { toNumber: () => now + 86400 * 3 },
-          createdAt:        { toNumber: () => now - 86400 * 7 },
-        },
-      },
-    ];
+    return [normalise({
+      orderKey:            "SIM_DCA_DEMO",
+      rawInAmountPerCycle: "250000",
+      rawInDeposited:      "1000000",
+      rawInUsed:           "250000",
+      rawOutReceived:      "3500000",
+      cycleFrequency:      "604800",
+      createdAt:           new Date((now - 86400 * 7) * 1000).toISOString(),
+      trades:              [],
+    })];
   }
 
-  return getDCA().getCurrentByUser(walletPublicKey);
+  try {
+    const params = new URLSearchParams({
+      user:          walletPublicKey.toBase58(),
+      orderStatus:   "active",
+      recurringType: "time",
+    });
+    const data = await jupiterFetch(`/recurring/v1/getRecurringOrders?${params}`);
+    return (data.orders ?? []).map(normalise);
+  } catch (err) {
+    console.warn("[DCA] Recurring API unavailable, falling back to on-chain SDK:", err.message);
+    return getDCA().getCurrentByUser(walletPublicKey);
+  }
+}
+
+// Normalise a Recurring API order object to the shape renderDCARow expects.
+function normalise(o) {
+  const freq = parseInt(o.cycleFrequency);
+  const lastTrade = o.trades?.at(-1);
+  const lastAt = lastTrade
+    ? Math.floor(new Date(lastTrade.confirmedAt).getTime() / 1000)
+    : Math.floor(new Date(o.createdAt).getTime() / 1000);
+
+  return {
+    publicKey: { toBase58: () => o.orderKey },
+    account: {
+      inAmountPerCycle: { toNumber: () => parseInt(o.rawInAmountPerCycle) },
+      inDeposited:      { toNumber: () => parseInt(o.rawInDeposited) },
+      inUsed:           { toNumber: () => parseInt(o.rawInUsed) },
+      outReceived:      { toNumber: () => parseInt(o.rawOutReceived) },
+      nextCycleAt:      { toNumber: () => lastAt + freq },
+      createdAt:        { toNumber: () => Math.floor(new Date(o.createdAt).getTime() / 1000) },
+    },
+  };
 }
 
 /**
@@ -151,4 +179,41 @@ export async function launchDCAOrder(amountUsdc, phaseMultiplier) {
   );
 
   return { sig, dcaAccount: dcaPubKey.toBase58() };
+}
+
+/**
+ * Close an open DCA order and return remaining funds to the wallet.
+ * @param {string|PublicKey} dcaPubKey - the DCA account address
+ */
+export async function closeDCA(dcaPubKey) {
+  if (!walletPublicKey) throw new Error("Wallet not connected");
+
+  if (isSimulation) {
+    await new Promise((r) => setTimeout(r, 1000));
+    const fakeSig = "SIM_CLOSE_" + Math.random().toString(36).slice(2, 8).toUpperCase();
+    console.log(`[SIM] closeDCA ${dcaPubKey} → ${fakeSig}`);
+    return fakeSig;
+  }
+
+  const { tx } = await getDCA().closeDCA({
+    user: walletPublicKey,
+    dca: typeof dcaPubKey === "string" ? new PublicKey(dcaPubKey) : dcaPubKey,
+  });
+
+  const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash();
+  tx.recentBlockhash = blockhash;
+  tx.feePayer = walletPublicKey;
+
+  const signed = await window.solana.signTransaction(tx);
+  const sig = await connection.sendRawTransaction(signed.serialize(), {
+    skipPreflight: false,
+    preflightCommitment: "confirmed",
+  });
+
+  await connection.confirmTransaction(
+    { signature: sig, blockhash, lastValidBlockHeight },
+    "confirmed"
+  );
+
+  return sig;
 }

@@ -1,5 +1,5 @@
 import { connectWallet, tryAutoConnect, walletPublicKey, fetchWalletBalances } from "./wallet.js";
-import { launchDCAOrder, fetchDCAOrders } from "./dca.js";
+import { launchDCAOrder, fetchDCAOrders, closeDCA } from "./dca.js";
 import { swapUSDCtoJLP, getJLPApy } from "./jlp.js";
 
 // ── Wallet ──────────────────────────────────────────────────────────────────
@@ -122,18 +122,19 @@ export async function refreshDCAOrders() {
 }
 
 function renderDCARow(order) {
-  const a = order.account;
+  const a       = order.account;
+  const pubkey  = order.publicKey.toBase58 ? order.publicKey.toBase58() : order.publicKey;
   const perCycle  = a.inAmountPerCycle.toNumber() / 1e6;
   const deposited = a.inDeposited.toNumber()      / 1e6;
   const used      = a.inUsed.toNumber()           / 1e6;
-  const received  = a.outReceived.toNumber()       / 1e9; // lamports → SOL
+  const received  = a.outReceived.toNumber()      / 1e9;
   const remaining = Math.max(0, deposited - used);
 
   const secsLeft  = a.nextCycleAt.toNumber() - Math.floor(Date.now() / 1000);
-  const nextLabel = secsLeft <= 0        ? "Next buy: imminent"
-                  : secsLeft < 3_600     ? `Next buy: ${Math.round(secsLeft / 60)}m`
-                  : secsLeft < 86_400    ? `Next buy: ${Math.round(secsLeft / 3_600)}h`
-                  :                        `Next buy: ${Math.round(secsLeft / 86_400)}d`;
+  const nextLabel = secsLeft <= 0     ? "Next buy: imminent"
+                  : secsLeft < 3_600  ? `Next buy: ${Math.round(secsLeft / 60)}m`
+                  : secsLeft < 86_400 ? `Next buy: ${Math.round(secsLeft / 3_600)}h`
+                  :                     `Next buy: ${Math.round(secsLeft / 86_400)}d`;
 
   const color = "var(--sol-green)";
   return (
@@ -145,10 +146,36 @@ function renderDCARow(order) {
           `<span class="tx-time">${nextLabel} · ${remaining.toFixed(2)} USDC left</span>` +
         `</div>` +
       `</div>` +
-      `<span class="tx-amount" style="color:${color}">+${received.toFixed(4)} SOL</span>` +
+      `<div style="display:flex;align-items:center;gap:10px">` +
+        `<span class="tx-amount" style="color:${color}">+${received.toFixed(4)} SOL</span>` +
+        `<button class="close-dca-btn" onclick="window.closeOrder('${pubkey}')" title="Close order and recover USDC">✕ Withdraw</button>` +
+      `</div>` +
     `</div>`
   );
 }
+
+// ── Close DCA order ───────────────────────────────────────────────────────────
+window.closeOrder = async (pubkey) => {
+  const confirmed = window.confirm(
+    "Close this DCA order and return remaining USDC to your wallet?"
+  );
+  if (!confirmed) return;
+
+  const btn = [...document.querySelectorAll(".close-dca-btn")]
+    .find((el) => el.getAttribute("onclick").includes(pubkey));
+  if (btn) { btn.textContent = "Closing..."; btn.disabled = true; }
+
+  try {
+    const sig = await closeDCA(pubkey);
+    console.log("[closeDCA] sig:", sig);
+    await refreshDCAOrders();
+    fetchWalletBalances();
+  } catch (err) {
+    console.error("[closeDCA] failed:", err);
+    alert("Failed to close order: " + err.message);
+    if (btn) { btn.textContent = "✕ Withdraw"; btn.disabled = false; }
+  }
+};
 
 // ── JLP APY display ──────────────────────────────────────────────────────────
 async function loadJLPApy() {

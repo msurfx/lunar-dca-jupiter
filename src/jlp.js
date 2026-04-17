@@ -1,15 +1,14 @@
 import { VersionedTransaction } from "@solana/web3.js";
-import { connection, walletPublicKey, isSimulation } from "./wallet.js";
+import { walletPublicKey, isSimulation } from "./wallet.js";
+import { jupiterFetch, withRetry } from "./jupiter.js";
 
 const USDC_MINT = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
-// JLP (Jupiter Liquidity Pool token) mainnet mint
-const JLP_MINT = "27G8MtK7VtTcCHkpASjSDdkWWYfoqT6ggEuKidVJidD4";
-const QUOTE_API = "https://quote-api.jup.ag/v6";
+const JLP_MINT  = "27G8MtK7VtTcCHkpASjSDdkWWYfoqT6ggEuKidVJidD4";
 
 /**
- * Swap USDC → JLP via Jupiter Swap API v6 (VersionedTransaction)
- * Used during waning/full-moon phases to park idle USDC in JLP yield
- * @param {number} amountUsdc - amount to swap in USDC
+ * Swap USDC → JLP via Jupiter Swap v2 (order → sign → execute).
+ * Jupiter submits the transaction — no sendRawTransaction needed.
+ * Retries retryable error codes per the integrating-jupiter skill.
  */
 export async function swapUSDCtoJLP(amountUsdc) {
   if (!walletPublicKey) throw new Error("Wallet not connected");
@@ -23,56 +22,52 @@ export async function swapUSDCtoJLP(amountUsdc) {
 
   const amountRaw = Math.round(amountUsdc * 1_000_000); // USDC 6 decimals
 
-  // 1. Get best route quote
-  const quoteUrl =
-    `${QUOTE_API}/quote` +
-    `?inputMint=${USDC_MINT}` +
-    `&outputMint=${JLP_MINT}` +
-    `&amount=${amountRaw}` +
-    `&slippageBps=50` +
-    `&onlyDirectRoutes=false`;
-
-  const quoteResp = await fetch(quoteUrl);
-  const quote = await quoteResp.json();
-  if (quote.error) throw new Error(`Jupiter quote: ${quote.error}`);
-
-  // 2. Build swap transaction
-  const swapResp = await fetch(`${QUOTE_API}/swap`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      quoteResponse: quote,
-      userPublicKey: walletPublicKey.toBase58(),
-      wrapAndUnwrapSol: true,
-      dynamicComputeUnitLimit: true,
-      prioritizationFeeLamports: "auto",
-    }),
+  // 1. Get order — Swap v2 returns a pre-built transaction + requestId
+  const params = new URLSearchParams({
+    inputMint: USDC_MINT,
+    outputMint: JLP_MINT,
+    amount:     amountRaw.toString(),
+    taker:      walletPublicKey.toBase58(),
+    slippageBps: "50",
   });
 
-  const swapData = await swapResp.json();
-  if (swapData.error) throw new Error(`Jupiter swap build: ${swapData.error}`);
+  const order = await withRetry(() => jupiterFetch(`/swap/v2/order?${params}`));
 
-  // 3. Deserialize, sign, send
-  const txBuf = Buffer.from(swapData.swapTransaction, "base64");
-  const tx = VersionedTransaction.deserialize(txBuf);
+  if (order.error || !order.transaction) {
+    throw new Error(`Swap order: ${order.error ?? "no transaction returned"}`);
+  }
 
+  // 2. Sign (Phantom) — transaction is already built, just sign it
+  const tx     = VersionedTransaction.deserialize(Buffer.from(order.transaction, "base64"));
   const signed = await window.solana.signTransaction(tx);
-  const sig = await connection.sendRawTransaction(signed.serialize(), {
-    skipPreflight: false,
-    preflightCommitment: "confirmed",
-  });
+  const signedB64 = Buffer.from(signed.serialize()).toString("base64");
 
-  const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash();
-  await connection.confirmTransaction(
-    { signature: sig, blockhash, lastValidBlockHeight },
-    "confirmed"
+  // 3. Execute — Jupiter submits to the network on our behalf
+  const result = await withRetry(() =>
+    jupiterFetch("/swap/v2/execute", {
+      method:  "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        signedTransaction: signedB64,
+        requestId:         order.requestId,
+      }),
+    })
   );
 
-  return sig;
+  if (result.status !== "Success") {
+    const err = Object.assign(
+      new Error(`Swap failed: ${result.error ?? "unknown"}`),
+      { code: result.code }
+    );
+    throw err;
+  }
+
+  console.log(`[JLP] swapped ${amountUsdc} USDC → JLP  sig:`, result.signature);
+  return result.signature;
 }
 
 /**
- * Fetch current JLP APY from Jupiter's stats endpoint (display only)
+ * Fetch current JLP APY from Jupiter's stats endpoint (display only).
  */
 export async function getJLPApy() {
   try {

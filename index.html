@@ -216,6 +216,25 @@ header { display:flex; align-items:center; justify-content:space-between; flex-s
 .tx-info .tx-type { font-size:13px; font-weight:600; display:block; }
 .tx-info .tx-time { font-size:10px; color:var(--text-dim); display:block; margin-top:1px; }
 .tx-amount { font-family:'Orbitron',monospace; font-size:12px; font-weight:700; }
+.close-dca-btn {
+  padding: 4px 9px;
+  background: transparent;
+  border: 1px solid rgba(255,80,80,0.3);
+  border-radius: 6px;
+  color: rgba(255,100,100,0.7);
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.close-dca-btn:hover:not(:disabled) {
+  background: rgba(255,80,80,0.1);
+  border-color: rgba(255,80,80,0.55);
+  color: #FF6464;
+}
+.close-dca-btn:disabled { opacity: 0.4; cursor: default; }
 .next-moon-row { display:flex; align-items:center; justify-content:space-between; padding:14px 18px; background:rgba(20,241,149,0.04); border:1px solid rgba(20,241,149,0.12); border-radius:12px; margin-bottom:12px; }
 .nmb-timer { font-family:'Orbitron',monospace; font-size:20px; font-weight:900; color:var(--sol-green); text-shadow:0 0 10px rgba(20,241,149,0.3); }
 
@@ -439,7 +458,7 @@ header { display:flex; align-items:center; justify-content:space-between; flex-s
 
     <!-- Cosmic Confidence -->
     <div class="conf-panel">
-      <div><div class="conf-label">Cosmic Confidence</div><div class="conf-stars" id="c-stars">★★★★☆</div></div>
+      <div><div class="conf-label" style="cursor:pointer" onclick="showConfInfo()">Cosmic Confidence ⓘ</div><div class="conf-stars" id="c-stars">★★★★☆</div></div>
       <div class="conf-track"><div class="conf-fill" id="c-fill" style="width:72%"></div></div>
       <div><div class="conf-score" id="c-score" style="color:var(--sol-green)">72</div><div class="conf-denom">/ 100</div></div>
       <div class="divider-v"></div>
@@ -540,8 +559,11 @@ header { display:flex; align-items:center; justify-content:space-between; flex-s
   </div>
 </div>
 
-<script>
-const SYNODIC = 29.53059;
+<script type="module">
+  window.__JUP_KEY__ = import.meta.env.VITE_JUP_API_KEY || '';
+  </script>
+  <script>
+  const SYNODIC = 29.53059;
 const KNOWN_NEW = new Date('2024-01-11T00:00:00Z');
 
 function getLunarDay() {
@@ -833,16 +855,34 @@ document.addEventListener('click',(e)=>{
   }
 });
 
+function showConfInfo() {
+  let el = document.getElementById('conf-info-popup');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'conf-info-popup';
+    document.body.appendChild(el);
+  }
+  el.style.cssText = `display:block;position:fixed;z-index:9999;left:50%;top:50%;transform:translate(-50%,-50%);width:min(420px,90vw);background:rgba(4,8,24,0.98);border:1px solid rgba(153,69,255,0.3);border-radius:16px;padding:24px;box-shadow:0 0 40px rgba(153,69,255,0.2);`;
+  el.innerHTML = `
+    <div style="font-family:'Orbitron',monospace;font-size:10px;letter-spacing:2px;color:var(--sol-purple);margin-bottom:14px">COSMIC CONFIDENCE SCORE</div>
+    <div style="font-size:13px;color:var(--text-dim);line-height:1.7;margin-bottom:12px">A composite signal combining lunar phase timing with market conditions — the same logic quietly used by institutional traders.</div>
+    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px">
+      <div style="display:flex;justify-content:space-between;font-size:12px;padding:8px 12px;background:rgba(20,241,149,0.06);border-radius:8px"><span style="color:var(--text-dim)">🌑 New Moon</span><span style="color:#14F195;font-weight:700">88 / 100</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;padding:8px 12px;background:rgba(153,69,255,0.06);border-radius:8px"><span style="color:var(--text-dim)">🌓 Waxing</span><span style="color:#9945FF;font-weight:700">64 / 100</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;padding:8px 12px;background:rgba(255,217,102,0.06);border-radius:8px"><span style="color:var(--text-dim)">🌕 Full Moon</span><span style="color:#FFD966;font-weight:700">38 / 100</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;padding:8px 12px;background:rgba(0,191,255,0.06);border-radius:8px"><span style="color:var(--text-dim)">🌗 Waning</span><span style="color:#00BFFF;font-weight:700">70 / 100</span></div>
+    </div>
+    <div style="font-size:11px;color:var(--text-dim);line-height:1.6;margin-bottom:16px">Based on Dichev & Janes (2001) research showing stock returns are historically <strong style="color:var(--sol-green)">3-5% higher around new moons</strong> vs full moons. Score also factors in the JLP yield opportunity during waning phases.</div>
+    <button onclick="document.getElementById('conf-info-popup').style.display='none'" style="width:100%;padding:10px;background:linear-gradient(135deg,var(--sol-purple),#5500EE);border:none;border-radius:10px;color:white;font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;cursor:pointer">GOT IT</button>
+  `;
+}
+
 window.addEventListener('DOMContentLoaded',()=>{
   initStars(); initSurfer(); updateUI();
   setInterval(updateUI,60000);
   fetchPrices(); setInterval(fetchPrices,30000);
   fetchTokenIcons();
 });
-</script>
-<script type="module">
-// Expose Jupiter API key to global scope for price fetching
-window.__JUP_KEY__ = import.meta.env.VITE_JUP_API_KEY || '';
 </script>
 <script type="module" src="/src/main.js"></script>
 </body>

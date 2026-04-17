@@ -1,9 +1,10 @@
-import { connectWallet, tryAutoConnect, walletPublicKey, fetchWalletBalances } from "./wallet.js";
+import { connectWallet, tryAutoConnect, walletPublicKey, fetchWalletBalances, setLastJLPPrice } from "./wallet.js";
 import { launchDCAOrder, fetchDCAOrders, closeDCA } from "./dca.js";
 import { swapUSDCtoJLP, getJLPApy } from "./jlp.js";
 
 // ── Wallet ──────────────────────────────────────────────────────────────────
 window.connectWallet = connectWallet;
+window.__setJLPPrice = setLastJLPPrice;
 
 // ── JLP toggle ───────────────────────────────────────────────────────────────
 window.toggleJLP = () => {

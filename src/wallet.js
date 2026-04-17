@@ -10,6 +10,10 @@ export let isSimulation = false;
 
 const MAINNET_GENESIS = "5eykt4UsFv8P8NJdTREpY1vzqKqZKvdpKuc147dw2N9d";
 const USDC_MINT = new PublicKey("EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v");
+const JLP_MINT  = new PublicKey("27G8MtK7VtTcCHkpASjSDdkWWYfoqT6ggEuKidVJidD4");
+
+let lastJLPPrice = 0;
+export function setLastJLPPrice(price) { lastJLPPrice = price; }
 
 async function detectNetwork() {
   try {
@@ -35,9 +39,10 @@ export async function fetchWalletBalances() {
   if (!walletPublicKey) return;
 
   try {
-    const [lamports, tokenAccounts] = await Promise.all([
+    const [lamports, usdcAccounts, jlpAccounts] = await Promise.all([
       connection.getBalance(walletPublicKey),
       connection.getParsedTokenAccountsByOwner(walletPublicKey, { mint: USDC_MINT }),
+      connection.getParsedTokenAccountsByOwner(walletPublicKey, { mint: JLP_MINT }),
     ]);
 
     const solEl = document.getElementById("d-sol");
@@ -45,9 +50,22 @@ export async function fetchWalletBalances() {
 
     const usdcEl = document.getElementById("d-usdc");
     if (usdcEl) {
-      const raw = tokenAccounts.value[0]
+      const raw = usdcAccounts.value[0]
         ?.account.data.parsed.info.tokenAmount.uiAmount;
       usdcEl.textContent = (raw ?? 0).toFixed(2);
+    }
+
+    const jlpBal = jlpAccounts.value[0]
+      ?.account.data.parsed.info.tokenAmount.uiAmount ?? 0;
+
+    const jlpBalEl = document.getElementById("d-jlp-bal");
+    if (jlpBalEl) jlpBalEl.textContent = jlpBal.toFixed(4);
+
+    const jlpUsdEl = document.getElementById("d-jlp-usd");
+    if (jlpUsdEl) {
+      jlpUsdEl.textContent = lastJLPPrice > 0
+        ? `≈ $${(jlpBal * lastJLPPrice).toFixed(2)} USD`
+        : jlpBal > 0 ? `${jlpBal.toFixed(4)} JLP` : "0.00";
     }
   } catch (err) {
     console.error("Balance fetch failed:", err);

@@ -346,7 +346,7 @@ header { display:flex; align-items:center; justify-content:space-between; flex-s
   <!-- PRICE STRIP -->
   <div class="price-strip">
     <div class="ps-item">
-      <img src="https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png" class="ps-tok-img" alt="SOL">
+      <img src="https://cdn.jsdelivr.net/gh/solana-labs/token-list@main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png" class="ps-tok-img" style="border-radius:50%;width:22px;height:22px" alt="SOL">
       <span class="ps-name">SOL</span>
       <span class="ps-price" id="ps-sol" style="color:var(--sol-green)">—</span>
     </div>
@@ -358,7 +358,7 @@ header { display:flex; align-items:center; justify-content:space-between; flex-s
     </div>
     <div class="ps-divider"></div>
     <div class="ps-item">
-      <img src="https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png" class="ps-tok-img" alt="USDC">
+      <img src="https://cdn.jsdelivr.net/gh/solana-labs/token-list@main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png" class="ps-tok-img" style="border-radius:50%;width:22px;height:22px" alt="USDC">
       <span class="ps-name">USDC</span>
       <span class="ps-price" style="color:var(--sol-green)">$1.00</span>
     </div>
@@ -426,13 +426,13 @@ header { display:flex; align-items:center; justify-content:space-between; flex-s
         <div class="phase-info" id="phase-info"></div>
         <div class="token-row">
           <div class="tok">
-            <img src="https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png" class="tok-img" alt="USDC">
+            <img src="https://cdn.jsdelivr.net/gh/solana-labs/token-list@main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png" class="ps-tok-img" style="border-radius:50%;width:22px;height:22px" alt="USDC">
             <span style="color:#60A5FA">USDC</span>
           </div>
           <span class="arrow-mid">→</span>
           <div class="tok">
             <span style="color:var(--sol-green)">SOL</span>
-            <img src="https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png" class="tok-img" alt="SOL">
+            <img src="https://cdn.jsdelivr.net/gh/solana-labs/token-list@main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png" class="ps-tok-img" style="border-radius:50%;width:22px;height:22px" alt="SOL">
           </div>
         </div>
         <div class="field-group">
@@ -469,16 +469,17 @@ header { display:flex; align-items:center; justify-content:space-between; flex-s
   <!-- DASHBOARD VIEW -->
   <div class="view" id="view-dash">
     <div class="dash-grid">
-      <div class="dash-card green"><span class="dc-icon">◎</span><span class="dc-label">SOL Balance</span><span class="dc-val" id="d-sol" style="color:var(--sol-green)">—</span><span class="dc-sub" id="d-sol-usd">Connect wallet</span></div>
-      <div class="dash-card purple"><span class="dc-icon">💵</span><span class="dc-label">USDC Balance</span><span class="dc-val" id="d-usdc" style="color:var(--sol-purple)">—</span><span class="dc-sub">Available to DCA</span></div>
+      <div class="dash-card green"><img src="https://cdn.jsdelivr.net/gh/solana-labs/token-list@main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png" style="width:28px;height:28px;border-radius:50%;margin-bottom:8px;display:block"><span class="dc-label">SOL Balance</span><span class="dc-val" id="d-sol" style="color:var(--sol-green)">—</span><span class="dc-sub" id="d-sol-usd">Connect wallet</span></div>
+      <div class="dash-card purple"><img src="https://cdn.jsdelivr.net/gh/solana-labs/token-list@main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png" style="width:28px;height:28px;border-radius:50%;margin-bottom:8px;display:block"><span class="dc-label">USDC Balance</span><span class="dc-val" id="d-usdc" style="color:var(--sol-purple)">—</span><span class="dc-sub">Available to DCA</span></div>
       <div class="dash-card yellow"><span class="dc-icon">🌑</span><span class="dc-label">Active DCA Orders</span><span class="dc-val" id="d-orders" style="color:#FFD966">1</span><span class="dc-sub">Via Jupiter DCA</span></div>
       <div class="dash-card blue"><span class="dc-icon">🌊</span><span class="dc-label">JLP Yield APY</span><span class="dc-val" id="d-apy" style="color:#00BFFF">~15%</span><span class="dc-sub">Jupiter Liquidity Pool</span></div>
+      <div class="dash-card" style="border:1px solid rgba(0,209,140,0.15)"><span class="dc-icon">J</span><span class="dc-label">JLP Staked</span><span class="dc-val" id="d-jlp-bal" style="color:var(--jup-green)">—</span><span class="dc-sub" id="d-jlp-usd">Connect wallet</span></div>
     </div>
     <div class="dash-two-col">
       <div class="dash-wide">
         <div class="dash-section-title">Live Prices · Jupiter API</div>
         <div class="price-row">
-          <div class="price-name"><img src="https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png" class="dash-tok-img" alt="SOL">SOL</div>
+          <div class="price-name"><img src="https://cdn.jsdelivr.net/gh/solana-labs/token-list@main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png" class="ps-tok-img" style="border-radius:50%;width:22px;height:22px" alt="SOL">SOL</div>
           <div class="price-right"><span class="price-usd" id="p-sol" style="color:var(--sol-green)">—</span><span class="price-tag up" id="p-sol-chg">—</span></div>
         </div>
         <div class="price-row">
@@ -486,7 +487,7 @@ header { display:flex; align-items:center; justify-content:space-between; flex-s
           <div class="price-right"><span class="price-usd" id="p-jlp" style="color:var(--jup-green)">—</span><span class="price-tag up" id="p-jlp-chg">—</span></div>
         </div>
         <div class="price-row">
-          <div class="price-name"><img src="https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png" class="dash-tok-img" alt="USDC">USDC</div>
+          <div class="price-name"><img src="https://cdn.jsdelivr.net/gh/solana-labs/token-list@main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png" class="ps-tok-img" style="border-radius:50%;width:22px;height:22px" alt="USDC">USDC</div>
           <div class="price-right"><span class="price-usd">$1.00</span><span class="price-tag up">Stable</span></div>
         </div>
       </div>
@@ -756,6 +757,7 @@ async function fetchPrices() {
     }
     if (jlpD && jlpD.usdPrice) {
       const jlp = jlpD.usdPrice;
+      if (window.__setJLPPrice) window.__setJLPPrice(jlp);
       const jchgPct = jlpD.priceChange24h ? jlpD.priceChange24h.toFixed(2) : null;
       ['ps-jlp','p-jlp'].forEach(id=>{const el=document.getElementById(id);if(el){el.textContent='$'+jlp.toFixed(4);el.style.color='var(--jup-green)';}});
       const jchgEl = document.getElementById('p-jlp-chg');

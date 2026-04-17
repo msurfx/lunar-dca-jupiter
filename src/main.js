@@ -1,4 +1,4 @@
-import { connectWallet, tryAutoConnect, walletPublicKey } from "./wallet.js";
+import { connectWallet, tryAutoConnect, walletPublicKey, fetchWalletBalances } from "./wallet.js";
 import { launchDCAOrder } from "./dca.js";
 import { swapUSDCtoJLP, getJLPApy } from "./jlp.js";
 
@@ -102,6 +102,7 @@ async function loadJLPApy() {
 window.addEventListener("DOMContentLoaded", () => {
   tryAutoConnect();
   loadJLPApy();
+  setInterval(fetchWalletBalances, 30_000);
 });
 
 // ── Helpers ──────────────────────────────────────────────────────────────────

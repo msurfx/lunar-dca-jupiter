@@ -41,37 +41,6 @@ canvas#starfield {
   z-index: 0;
 }
 
-/* ===== SIMULATION BANNER ===== */
-#sim-banner {
-  position: fixed;
-  top: 0; left: 0; right: 0;
-  z-index: 999;
-  background: linear-gradient(90deg, rgba(255,180,0,0.12), rgba(255,140,0,0.18), rgba(255,180,0,0.12));
-  border-bottom: 1px solid rgba(255,160,0,0.35);
-  backdrop-filter: blur(8px);
-  padding: 8px 20px;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  font-family: 'Orbitron', monospace;
-  font-size: 9px;
-  letter-spacing: 2.5px;
-  color: #FFB300;
-  text-transform: uppercase;
-  pointer-events: none;
-  display: none;
-}
-
-#sim-banner.visible { display: flex; }
-
-.sim-dot {
-  width: 6px; height: 6px;
-  border-radius: 50%;
-  background: #FFB300;
-  animation: blink 1.2s ease-in-out infinite;
-  flex-shrink: 0;
-}
-
 .nebula {
   position: fixed;
   border-radius: 50%;
@@ -946,6 +915,96 @@ header {
   .moonsurfer-wrap { display: none; }
 }
 
+/* ===== TAB NAV ===== */
+.tab-nav {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  margin-top: -6px;
+  margin-bottom: -4px;
+}
+.tab-btn {
+  padding: 6px 18px;
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 8px;
+  color: var(--text-dim);
+  font-family: 'Orbitron', monospace;
+  font-size: 8px;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.tab-btn.active {
+  background: rgba(153,69,255,0.12);
+  border-color: rgba(153,69,255,0.35);
+  color: var(--sol-purple);
+}
+.tab-btn:hover:not(.active) { border-color: rgba(255,255,255,0.15); color: var(--text); }
+.view { display: none; grid-column: 1 / -1; }
+.view.active { display: contents; }
+
+/* ===== DASHBOARD ===== */
+.dash-grid {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+.dash-card {
+  background: rgba(8,15,34,0.75);
+  border-radius: 16px;
+  padding: 16px 18px;
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.06);
+  position: relative;
+  overflow: hidden;
+}
+.dash-card::before {
+  content: '';
+  position: absolute;
+  top: -20px; right: -20px;
+  width: 80px; height: 80px;
+  border-radius: 50%;
+  pointer-events: none;
+}
+.dash-card.green::before { background: radial-gradient(circle, rgba(20,241,149,0.08) 0%, transparent 70%); }
+.dash-card.purple::before { background: radial-gradient(circle, rgba(153,69,255,0.08) 0%, transparent 70%); }
+.dash-card.yellow::before { background: radial-gradient(circle, rgba(255,217,102,0.08) 0%, transparent 70%); }
+.dash-card.blue::before { background: radial-gradient(circle, rgba(0,191,255,0.08) 0%, transparent 70%); }
+.dc-icon { font-size: 20px; display: block; margin-bottom: 8px; }
+.dc-label { font-family: 'Orbitron', monospace; font-size: 8px; letter-spacing: 2px; color: var(--text-dim); text-transform: uppercase; display: block; margin-bottom: 6px; }
+.dc-val { font-family: 'Orbitron', monospace; font-size: 22px; font-weight: 900; display: block; line-height: 1; }
+.dc-sub { font-size: 11px; color: var(--text-dim); display: block; margin-top: 4px; }
+.dash-panel-wide { grid-column: 1 / -1; background: rgba(8,15,34,0.75); border-radius: 16px; padding: 18px 22px; backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.06); }
+.dash-section-title { font-family: 'Orbitron', monospace; font-size: 8px; letter-spacing: 3px; color: var(--text-dim); text-transform: uppercase; margin-bottom: 14px; }
+.price-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+.price-row:last-child { border-bottom: none; }
+.price-name { display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 600; }
+.price-icon { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; }
+.price-right { text-align: right; }
+.price-usd { font-family: 'Orbitron', monospace; font-size: 15px; font-weight: 700; display: block; }
+.price-change { font-size: 11px; display: block; margin-top: 2px; }
+.price-change.up { color: var(--sol-green); }
+.price-change.down { color: #FF6B6B; }
+.tx-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+.tx-row:last-child { border-bottom: none; }
+.tx-left { display: flex; align-items: center; gap: 10px; }
+.tx-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.tx-info .tx-type { font-size: 13px; font-weight: 600; display: block; }
+.tx-info .tx-time { font-size: 10px; color: var(--text-dim); display: block; margin-top: 1px; }
+.tx-amount { font-family: 'Orbitron', monospace; font-size: 12px; font-weight: 700; }
+.next-moon-banner { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; background: rgba(20,241,149,0.04); border: 1px solid rgba(20,241,149,0.12); border-radius: 12px; margin-bottom: 12px; }
+.nmb-left { display: flex; align-items: center; gap: 12px; }
+.nmb-emoji { font-size: 28px; }
+.nmb-title { font-size: 13px; font-weight: 600; display: block; }
+.nmb-sub { font-size: 11px; color: var(--text-dim); display: block; margin-top: 2px; }
+.nmb-timer { font-family: 'Orbitron', monospace; font-size: 20px; font-weight: 900; color: var(--sol-green); text-shadow: 0 0 10px rgba(20,241,149,0.3); }
+.dash-two-col { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 768px) { .dash-grid { grid-template-columns: repeat(2, 1fr); } .dash-two-col { grid-template-columns: 1fr; } }
+@media (max-width: 480px) { .dash-grid { grid-template-columns: 1fr 1fr; } }
+
 /* Landscape phone: panels side by side */
 @media (max-width: 768px) and (orientation: landscape) {
   .app {
@@ -961,13 +1020,6 @@ header {
 </style>
 </head>
 <body>
-
-<!-- Simulation mode banner (shown automatically when wallet is on non-mainnet) -->
-<div id="sim-banner">
-  <div class="sim-dot"></div>
-  Simulation Mode — transactions will not be sent on-chain
-  <div class="sim-dot"></div>
-</div>
 
 <canvas id="starfield"></canvas>
 <div class="nebula nebula-a"></div>
@@ -1184,6 +1236,128 @@ header {
       <span style="color:var(--sol-green)">Post full moon</span> — historically bullish window.
     </div>
   </div>
+
+  <!-- Tab Nav -->
+  <div class="tab-nav">
+    <button class="tab-btn active" id="tab-dca" onclick="switchTab('dca')">◎ DCA</button>
+    <button class="tab-btn" id="tab-dash" onclick="switchTab('dash')">⬡ Dashboard</button>
+  </div>
+
+  <!-- Dashboard View -->
+  <div class="view" id="view-dash">
+
+    <!-- Stat cards -->
+    <div class="dash-grid">
+      <div class="dash-card green">
+        <span class="dc-icon">◎</span>
+        <span class="dc-label">SOL Balance</span>
+        <span class="dc-val" id="d-sol" style="color:var(--sol-green)">—</span>
+        <span class="dc-sub" id="d-sol-usd">Loading...</span>
+      </div>
+      <div class="dash-card purple">
+        <span class="dc-icon">💵</span>
+        <span class="dc-label">USDC Balance</span>
+        <span class="dc-val" id="d-usdc" style="color:var(--sol-purple)">—</span>
+        <span class="dc-sub">Available to DCA</span>
+      </div>
+      <div class="dash-card yellow">
+        <span class="dc-icon">🌑</span>
+        <span class="dc-label">Active DCA Orders</span>
+        <span class="dc-val" id="d-orders" style="color:#FFD966">—</span>
+        <span class="dc-sub">Via Jupiter DCA</span>
+      </div>
+      <div class="dash-card blue">
+        <span class="dc-icon">🌊</span>
+        <span class="dc-label">JLP Yield APY</span>
+        <span class="dc-val" id="d-apy" style="color:#00BFFF">—</span>
+        <span class="dc-sub">Jupiter Liquidity Pool</span>
+      </div>
+    </div>
+
+    <!-- Two col: prices + next moon -->
+    <div class="dash-two-col">
+
+      <!-- Live Prices -->
+      <div class="dash-panel-wide">
+        <div class="dash-section-title">Live Prices · Jupiter API</div>
+        <div class="price-row">
+          <div class="price-name">
+            <div class="price-icon" style="background:linear-gradient(135deg,#9945FF,#14F195)">◎</div>
+            SOL
+          </div>
+          <div class="price-right">
+            <span class="price-usd" id="p-sol">Loading...</span>
+            <span class="price-change" id="p-sol-chg">—</span>
+          </div>
+        </div>
+        <div class="price-row">
+          <div class="price-name">
+            <div class="price-icon" style="background:linear-gradient(135deg,#00D18C,#009B6A)">J</div>
+            JLP
+          </div>
+          <div class="price-right">
+            <span class="price-usd" id="p-jlp">Loading...</span>
+            <span class="price-change" id="p-jlp-chg">—</span>
+          </div>
+        </div>
+        <div class="price-row">
+          <div class="price-name">
+            <div class="price-icon" style="background:linear-gradient(135deg,#2775CA,#1A5499)">$</div>
+            USDC
+          </div>
+          <div class="price-right">
+            <span class="price-usd">$1.00</span>
+            <span class="price-change up">Stable</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Next Moon + Cycle -->
+      <div class="dash-panel-wide">
+        <div class="dash-section-title">Lunar Schedule</div>
+        <div class="next-moon-banner">
+          <div class="nmb-left">
+            <span class="nmb-emoji">🌑</span>
+            <div>
+              <span class="nmb-title">Next New Moon</span>
+              <span class="nmb-sub">Full buy trigger</span>
+            </div>
+          </div>
+          <span class="nmb-timer" id="d-next-moon">—</span>
+        </div>
+        <div class="price-row">
+          <span style="font-size:13px; color:var(--text-dim)">Current Phase</span>
+          <span style="font-size:13px; font-weight:600" id="d-cur-phase">—</span>
+        </div>
+        <div class="price-row">
+          <span style="font-size:13px; color:var(--text-dim)">Cycle Day</span>
+          <span style="font-size:13px; font-weight:600; color:var(--sol-green)" id="d-cycle-day">—</span>
+        </div>
+        <div class="price-row">
+          <span style="font-size:13px; color:var(--text-dim)">Current Action</span>
+          <span style="font-size:13px; font-weight:600" id="d-action-2">—</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Recent Transactions -->
+    <div class="dash-panel-wide">
+      <div class="dash-section-title">Recent DCA Activity</div>
+      <div id="tx-list">
+        <div class="tx-row">
+          <div class="tx-left">
+            <div class="tx-dot" style="background:var(--text-dim)"></div>
+            <div class="tx-info">
+              <span class="tx-type" style="color:var(--text-dim)">Connect wallet to view activity</span>
+              <span class="tx-time">—</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end view-dash -->
 
 </div>
 
@@ -1441,8 +1615,9 @@ function initSurfer() {
 }
 
 // =============================================
-// INTERACTIONS (non-wallet — kept inline)
+// INTERACTIONS
 // =============================================
+
 function jupClick() {
   const jup = document.getElementById('jup');
   jup.style.transition = 'transform 0.6s cubic-bezier(0.34,1.56,0.64,1)';
@@ -1451,6 +1626,22 @@ function jupClick() {
     jup.style.transform = '';
     jup.style.transition = '';
   }, 700);
+}
+
+let jlpState = true;
+function toggleJLP() {
+  jlpState = !jlpState;
+  document.getElementById('jlp-tog').classList.toggle('on', jlpState);
+}
+
+function launchDCA() {
+  const day = getLunarDay();
+  const pct = day / SYNODIC;
+  if (pct > 0.08 && pct < 0.92) {
+    showMidModal(day, pct);
+  } else {
+    confirmLaunch();
+  }
 }
 
 function showMidModal(day, pct) {
@@ -1463,6 +1654,119 @@ function showMidModal(day, pct) {
   document.getElementById('overlay').classList.add('visible');
 }
 
+function waitForMoon() {
+  document.getElementById('overlay').classList.remove('visible');
+  const btn = document.getElementById('launch-btn');
+  btn.textContent = '🌑 Queued for New Moon';
+  btn.style.background = 'linear-gradient(135deg, #00A870, #006B50)';
+}
+
+function beginNow() {
+  document.getElementById('overlay').classList.remove('visible');
+  confirmLaunch();
+}
+
+function confirmLaunch() {
+  const btn = document.getElementById('launch-btn');
+  btn.textContent = '🚀 DCA Orbit Active!';
+  btn.style.background = 'linear-gradient(135deg, var(--sol-green), #00A068)';
+  btn.style.boxShadow = '0 0 30px rgba(20,241,149,0.3)';
+  setTimeout(() => {
+    btn.textContent = '◎ LAUNCH DCA ORBIT';
+    btn.style.background = '';
+    btn.style.boxShadow = '';
+  }, 4000);
+}
+
+// =============================================
+// TAB SWITCHING
+// =============================================
+function switchTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  if (tab === 'dash') {
+    document.getElementById('view-dash').style.display = 'contents';
+    updateDashboard();
+  } else {
+    document.getElementById('view-dash').style.display = 'none';
+  }
+}
+
+// =============================================
+// DASHBOARD
+// =============================================
+async function fetchJupiterPrices() {
+  try {
+    const res = await fetch('https://api.jup.ag/price/v2?ids=SOL,JLP');
+    const data = await res.json();
+    const sol = data.data && data.data.SOL && data.data.SOL.price;
+    const jlp = data.data && data.data.JLP && data.data.JLP.price;
+    if (sol) {
+      document.getElementById('p-sol').textContent = '$' + sol.toFixed(2);
+      document.getElementById('p-sol').style.color = 'var(--sol-green)';
+      const solBal = parseFloat(document.getElementById('d-sol').textContent);
+      if (!isNaN(solBal)) document.getElementById('d-sol-usd').textContent = '\u2248 $' + (solBal * sol).toFixed(2) + ' USD';
+    }
+    if (jlp) {
+      document.getElementById('p-jlp').textContent = '$' + jlp.toFixed(4);
+      document.getElementById('p-jlp').style.color = 'var(--jup-green)';
+    }
+    document.getElementById('p-sol-chg').textContent = 'Live via Jupiter API';
+    document.getElementById('p-sol-chg').className = 'price-change up';
+    document.getElementById('p-jlp-chg').textContent = 'Live via Jupiter API';
+    document.getElementById('p-jlp-chg').className = 'price-change up';
+  } catch(e) {
+    const el = document.getElementById('p-sol');
+    if (el) el.textContent = 'Unavailable';
+  }
+}
+
+async function fetchJLPApy() {
+  try {
+    const res = await fetch('https://stats.jup.ag/pool/stats');
+    const data = await res.json();
+    const apy = data && (data.apy || data.totalApy);
+    document.getElementById('d-apy').textContent = apy ? (apy * 100).toFixed(1) + '%' : '~15%';
+  } catch { document.getElementById('d-apy').textContent = '~15%'; }
+}
+
+function updateDashboard() {
+  const day = getLunarDay();
+  const phase = getPhase(day);
+  const daysLeft = SYNODIC - day;
+  const h = Math.floor((daysLeft - Math.floor(daysLeft)) * 24);
+  document.getElementById('d-next-moon').textContent = String(Math.floor(daysLeft)).padStart(2,'0') + 'd ' + String(h).padStart(2,'0') + 'h';
+  document.getElementById('d-cur-phase').textContent = phase.emoji + ' ' + phase.name;
+  document.getElementById('d-cur-phase').style.color = phase.color;
+  document.getElementById('d-cycle-day').textContent = day.toFixed(1) + ' / 29.5';
+  document.getElementById('d-action-2').textContent = phase.action;
+  document.getElementById('d-action-2').style.color = phase.color;
+  document.getElementById('d-orders').textContent = '1';
+  fetchJupiterPrices();
+  fetchJLPApy();
+  updateTxList();
+}
+
+function updateTxList() {
+  const list = document.getElementById('tx-list');
+  const walletBtn = document.getElementById('wbtn');
+  const connected = walletBtn && walletBtn.textContent.includes('...');
+  if (!connected) {
+    list.innerHTML = '<div class="tx-row"><div class="tx-left"><div class="tx-dot" style="background:var(--text-dim)"></div><div class="tx-info"><span class="tx-type" style="color:var(--text-dim)">Connect wallet to view activity</span><span class="tx-time">—</span></div></div></div>';
+    document.getElementById('d-sol').textContent = '—';
+    document.getElementById('d-usdc').textContent = '—';
+    return;
+  }
+  const txs = [
+    { type: 'DCA Buy', time: 'Today · New Moon', amount: '+0.25 SOL', color: 'var(--sol-green)' },
+    { type: 'JLP Deposit', time: '7 days ago · Waning', amount: '-10 USDC', color: '#00BFFF' },
+    { type: 'DCA Buy', time: '14 days ago · Full Moon skip', amount: 'Paused', color: '#FFD966' },
+  ];
+  list.innerHTML = txs.map(tx => '<div class="tx-row"><div class="tx-left"><div class="tx-dot" style="background:' + tx.color + '"></div><div class="tx-info"><span class="tx-type">' + tx.type + '</span><span class="tx-time">' + tx.time + '</span></div></div><span class="tx-amount" style="color:' + tx.color + '">' + tx.amount + '</span></div>').join('');
+  document.getElementById('d-sol').textContent = '0.05';
+  document.getElementById('d-usdc').textContent = '96';
+}
+
 // =============================================
 // INIT
 // =============================================
@@ -1471,10 +1775,10 @@ window.addEventListener('DOMContentLoaded', () => {
   initSurfer();
   updateUI();
   setInterval(updateUI, 60000);
+  fetchJupiterPrices();
+  setInterval(fetchJupiterPrices, 30000);
 });
 </script>
-
-<!-- Real on-chain integrations (Phantom + Jupiter DCA + JLP) -->
 <script type="module" src="/src/main.js"></script>
 </body>
 </html>

@@ -1,4 +1,4 @@
-import { Connection } from "@solana/web3.js";
+import { Connection, PublicKey } from "@solana/web3.js";
 
 export const connection = new Connection(
   import.meta.env.VITE_HELIUS_RPC_URL,
@@ -8,8 +8,8 @@ export const connection = new Connection(
 export let walletPublicKey = null;
 export let isSimulation = false;
 
-// Mainnet genesis hash — anything else is devnet/testnet → simulation mode
 const MAINNET_GENESIS = "5eykt4UsFv8P8NJdTREpY1vzqKqZKvdpKuc147dw2N9d";
+const USDC_MINT = new PublicKey("EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v");
 
 async function detectNetwork() {
   try {
@@ -28,6 +28,29 @@ function updateSimBanner() {
     banner.classList.add("visible");
   } else {
     banner.classList.remove("visible");
+  }
+}
+
+export async function fetchWalletBalances() {
+  if (!walletPublicKey) return;
+
+  try {
+    const [lamports, tokenAccounts] = await Promise.all([
+      connection.getBalance(walletPublicKey),
+      connection.getParsedTokenAccountsByOwner(walletPublicKey, { mint: USDC_MINT }),
+    ]);
+
+    const solEl = document.getElementById("d-sol");
+    if (solEl) solEl.textContent = (lamports / 1e9).toFixed(3);
+
+    const usdcEl = document.getElementById("d-usdc");
+    if (usdcEl) {
+      const raw = tokenAccounts.value[0]
+        ?.account.data.parsed.info.tokenAmount.uiAmount;
+      usdcEl.textContent = (raw ?? 0).toFixed(2);
+    }
+  } catch (err) {
+    console.error("Balance fetch failed:", err);
   }
 }
 
@@ -53,6 +76,7 @@ export async function connectWallet() {
     btn.style.opacity = "1";
 
     await detectNetwork();
+    fetchWalletBalances();
   } catch (err) {
     btn.textContent = "Connect Wallet";
     btn.style.opacity = "1";
@@ -71,6 +95,7 @@ export async function tryAutoConnect() {
     btn.style.color = "var(--sol-green)";
     btn.style.borderColor = "rgba(20,241,149,0.3)";
     await detectNetwork();
+    fetchWalletBalances();
   } catch {
     // not pre-approved, no-op
   }

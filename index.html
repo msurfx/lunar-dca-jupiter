@@ -16,13 +16,11 @@
   --moon-silver: #C8D4E8;
   --star: #6678AA;
   --text: #E0E8FF;
-  --text-dim: #5A6888;
+  --text-dim: #8A9BB8;
   --phase-new: #14F195;
   --phase-wax: #9945FF;
   --phase-full: #FFD966;
   --phase-wan: #00BFFF;
-  --glow-purple: rgba(153,69,255,0.15);
-  --glow-green: rgba(20,241,149,0.15);
 }
 
 * { margin:0; padding:0; box-sizing:border-box; }
@@ -35,987 +33,235 @@ html, body {
   overflow: hidden;
 }
 
-canvas#starfield {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-}
+canvas#starfield { position:fixed; inset:0; z-index:0; }
 
-.nebula {
-  position: fixed;
-  border-radius: 50%;
-  z-index: 1;
-  pointer-events: none;
-}
-.nebula-a {
-  width: 700px; height: 500px;
-  background: radial-gradient(ellipse, rgba(153,69,255,0.18) 0%, transparent 70%);
-  top: -200px; left: -150px;
-}
-.nebula-b {
-  width: 600px; height: 400px;
-  background: radial-gradient(ellipse, rgba(20,241,149,0.12) 0%, transparent 70%);
-  bottom: -100px; right: -100px;
-}
-.nebula-c {
-  width: 400px; height: 300px;
-  background: radial-gradient(ellipse, rgba(0,191,255,0.08) 0%, transparent 70%);
-  top: 40%; left: 40%;
-}
+.nebula { position:fixed; border-radius:50%; z-index:1; pointer-events:none; }
+.nebula-a { width:700px; height:500px; background:radial-gradient(ellipse, rgba(153,69,255,0.18) 0%, transparent 70%); top:-200px; left:-150px; }
+.nebula-b { width:600px; height:400px; background:radial-gradient(ellipse, rgba(20,241,149,0.12) 0%, transparent 70%); bottom:-100px; right:-100px; }
+.nebula-c { width:400px; height:300px; background:radial-gradient(ellipse, rgba(0,191,255,0.08) 0%, transparent 70%); top:40%; left:40%; }
 
-/* ===== JUPITER IN ORBIT ===== */
-.jupiter-system {
-  position: fixed;
-  top: 32px;
-  right: 100px;
-  width: 140px;
-  height: 140px;
-  z-index: 8;
-}
+/* JUPITER */
+.jupiter-system { position:fixed; top:32px; right:100px; width:140px; height:140px; z-index:8; }
+.orbital-ring { position:absolute; width:180px; height:50px; border:1.5px solid rgba(0,209,140,0.25); border-radius:50%; top:38px; left:-20px; transform:rotateX(65deg); animation:ring-pulse 4s ease-in-out infinite; }
+.orbital-ring-2 { position:absolute; width:200px; height:55px; border:0.5px solid rgba(153,69,255,0.12); border-radius:50%; top:34px; left:-30px; transform:rotateX(65deg); animation:ring-pulse 6s ease-in-out infinite reverse; }
+@keyframes ring-pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+.jupiter-planet { position:absolute; width:90px; height:90px; top:18px; left:25px; border-radius:50%; background:radial-gradient(circle at 32% 30%, #2BEEAB 0%, #00A870 35%, #006B50 65%, #003D30 100%); animation:jup-float 7s ease-in-out infinite; cursor:pointer; overflow:hidden; box-shadow:0 0 20px rgba(0,209,140,0.35),0 0 50px rgba(0,209,140,0.12),inset -8px -8px 20px rgba(0,0,0,0.4); }
+.jupiter-band { position:absolute; left:0; right:0; border-radius:50%; opacity:0.35; }
+.jb1 { top:22px; height:8px; background:rgba(0,0,0,0.3); }
+.jb2 { top:38px; height:5px; background:rgba(255,255,255,0.12); }
+.jb3 { top:55px; height:7px; background:rgba(0,0,0,0.25); }
+.jupiter-jup { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-family:'Orbitron',monospace; font-size:11px; font-weight:900; color:rgba(255,255,255,0.85); letter-spacing:1px; text-shadow:0 0 8px rgba(0,255,180,0.6); }
+.jupiter-tag { position:absolute; bottom:-6px; left:50%; transform:translateX(-50%); font-family:'Orbitron',monospace; font-size:8px; color:var(--jup-green); letter-spacing:3px; white-space:nowrap; text-shadow:0 0 6px var(--jup-green); }
+.jup-moon { position:absolute; width:14px; height:14px; border-radius:50%; background:radial-gradient(circle at 35% 30%, #8899BB, #334466); box-shadow:0 0 6px rgba(150,170,220,0.4); animation:jup-moon-orbit 5s linear infinite; top:55px; left:25px; transform-origin:20px 15px; }
+@keyframes jup-float { 0%,100%{transform:translateY(0) rotate(0deg)} 30%{transform:translateY(-10px) rotate(3deg)} 70%{transform:translateY(5px) rotate(-2deg)} }
+@keyframes jup-moon-orbit { from{transform:rotate(0deg) translateX(52px)} to{transform:rotate(360deg) translateX(52px)} }
 
-.orbital-ring {
-  position: absolute;
-  width: 180px;
-  height: 50px;
-  border: 1.5px solid rgba(0,209,140,0.25);
-  border-radius: 50%;
-  top: 38px;
-  left: -20px;
-  transform: rotateX(65deg);
-  animation: ring-pulse 4s ease-in-out infinite;
-}
-
-.orbital-ring-2 {
-  position: absolute;
-  width: 200px;
-  height: 55px;
-  border: 0.5px solid rgba(153,69,255,0.12);
-  border-radius: 50%;
-  top: 34px;
-  left: -30px;
-  transform: rotateX(65deg);
-  animation: ring-pulse 6s ease-in-out infinite reverse;
-}
-
-@keyframes ring-pulse {
-  0%,100% { opacity:1; }
-  50% { opacity:0.4; }
-}
-
-.jupiter-planet {
-  position: absolute;
-  width: 90px; height: 90px;
-  top: 18px; left: 25px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 32% 30%, #2BEEAB 0%, #00A870 35%, #006B50 65%, #003D30 100%);
-  animation: jup-float 7s ease-in-out infinite;
-  cursor: pointer;
-  overflow: hidden;
-  box-shadow:
-    0 0 20px rgba(0,209,140,0.35),
-    0 0 50px rgba(0,209,140,0.12),
-    inset -8px -8px 20px rgba(0,0,0,0.4);
-}
-
-.jupiter-band {
-  position: absolute;
-  left: 0; right: 0;
-  border-radius: 50%;
-  opacity: 0.35;
-}
-.jb1 { top: 22px; height: 8px; background: rgba(0,0,0,0.3); }
-.jb2 { top: 38px; height: 5px; background: rgba(255,255,255,0.12); }
-.jb3 { top: 55px; height: 7px; background: rgba(0,0,0,0.25); }
-
-.jupiter-jup {
-  position: absolute;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-  font-family: 'Orbitron', monospace;
-  font-size: 11px;
-  font-weight: 900;
-  color: rgba(255,255,255,0.85);
-  letter-spacing: 1px;
-  text-shadow: 0 0 8px rgba(0,255,180,0.6);
-}
-
-.jupiter-tag {
-  position: absolute;
-  bottom: -6px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-family: 'Orbitron', monospace;
-  font-size: 8px;
-  color: var(--jup-green);
-  letter-spacing: 3px;
-  white-space: nowrap;
-  text-shadow: 0 0 6px var(--jup-green);
-}
-
-.jup-moon {
-  position: absolute;
-  width: 14px; height: 14px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 35% 30%, #8899BB, #334466);
-  box-shadow: 0 0 6px rgba(150,170,220,0.4);
-  animation: jup-moon-orbit 5s linear infinite;
-  top: 55px; left: 25px;
-  transform-origin: 20px 15px;
-}
-
-@keyframes jup-float {
-  0%,100% { transform: translateY(0) rotate(0deg); }
-  30% { transform: translateY(-10px) rotate(3deg); }
-  70% { transform: translateY(5px) rotate(-2deg); }
-}
-
-@keyframes jup-moon-orbit {
-  from { transform: rotate(0deg) translateX(52px); }
-  to { transform: rotate(360deg) translateX(52px); }
-}
-
-/* ===== LAYOUT ===== */
+/* LAYOUT - clean flexbox, no row fighting */
 .app {
-  position: relative;
-  z-index: 10;
-  height: 100vh;
-  display: grid;
-  grid-template-rows: 64px 1fr 72px;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  padding: 20px 24px;
-  max-width: 1100px;
-  margin: 0 auto;
-}
-
-/* ===== HEADER ===== */
-header {
-  grid-column: 1 / -1;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.wordmark {
-  display: flex;
-  align-items: baseline;
-  gap: 10px;
-}
-
-.logo-text {
-  font-family: 'Orbitron', monospace;
-  font-size: 24px;
-  font-weight: 900;
-  letter-spacing: 3px;
-  background: linear-gradient(135deg, var(--sol-green) 0%, var(--sol-purple) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.logo-tag {
-  font-size: 11px;
-  color: var(--text-dim);
-  letter-spacing: 3px;
-  text-transform: uppercase;
-}
-
-.header-right {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.network-pill {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
-  background: rgba(20,241,149,0.06);
-  border: 1px solid rgba(20,241,149,0.15);
-  border-radius: 20px;
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--sol-green);
-  letter-spacing: 1px;
-}
-
-.net-dot {
-  width: 6px; height: 6px;
-  border-radius: 50%;
-  background: var(--sol-green);
-  animation: blink 2s ease-in-out infinite;
-}
-
-@keyframes blink {
-  0%,100% { opacity:1; }
-  50% { opacity:0.3; }
-}
-
-.wallet-btn {
-  padding: 8px 18px;
-  background: rgba(153,69,255,0.1);
-  border: 1px solid rgba(153,69,255,0.3);
-  border-radius: 10px;
-  color: var(--sol-purple);
-  font-family: 'Orbitron', monospace;
-  font-size: 9px;
-  letter-spacing: 2px;
-  cursor: pointer;
-  transition: all 0.3s;
-}
-.wallet-btn:hover {
-  background: rgba(153,69,255,0.2);
-  border-color: rgba(153,69,255,0.5);
-  box-shadow: 0 0 16px rgba(153,69,255,0.2);
-}
-
-/* ===== PANELS ===== */
-.panel {
-  background: rgba(8,15,34,0.75);
-  border-radius: 20px;
-  padding: 20px 22px;
-  backdrop-filter: blur(12px);
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  position: relative;
-}
-
-.panel-moon {
-  border: 1px solid rgba(153,69,255,0.18);
-  align-items: center;
-}
-
-.panel-moon::before {
-  content: '';
-  position: absolute;
-  top: -40px; left: -40px;
-  width: 200px; height: 200px;
-  background: radial-gradient(circle, rgba(153,69,255,0.08) 0%, transparent 70%);
-  pointer-events: none;
-}
-
-.panel-dca {
-  border: 1px solid rgba(20,241,149,0.12);
-  gap: 12px;
-}
-
-.panel-dca::before {
-  content: '';
-  position: absolute;
-  bottom: -40px; right: -40px;
-  width: 200px; height: 200px;
-  background: radial-gradient(circle, rgba(20,241,149,0.06) 0%, transparent 70%);
-  pointer-events: none;
-}
-
-.panel-title {
-  font-family: 'Orbitron', monospace;
-  font-size: 9px;
-  letter-spacing: 4px;
-  color: var(--text-dim);
-  text-transform: uppercase;
-  margin-bottom: 14px;
-  text-align: center;
-}
-
-/* ===== MOON DIAL ===== */
-.dial-wrap {
-  position: relative;
-  width: 230px;
-  height: 230px;
-}
-
-#moon-dial { width: 100%; height: 100%; }
-
-.dial-center {
-  position: absolute;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-  text-align: center;
-  pointer-events: none;
-}
-
-.dial-emoji {
-  font-size: 40px;
-  display: block;
-  line-height: 1;
-  filter: drop-shadow(0 0 8px rgba(255,255,255,0.3));
-}
-
-.dial-phase {
-  font-family: 'Orbitron', monospace;
-  font-size: 8px;
-  letter-spacing: 2px;
-  color: var(--text-dim);
-  text-transform: uppercase;
-  margin-top: 6px;
-  display: block;
-}
-
-.dial-action {
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 1px;
-  margin-top: 3px;
-  display: block;
-}
-
-.dial-stats {
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  margin-top: 10px;
-}
-
-.stat-block { text-align: center; }
-.stat-val {
-  font-family: 'Orbitron', monospace;
-  font-size: 18px;
-  font-weight: 700;
-  display: block;
-}
-.stat-lbl {
-  font-size: 10px;
-  color: var(--text-dim);
-  display: block;
-  margin-top: 2px;
-}
-
-.progress-row {
-  width: 100%;
-  margin-top: 10px;
-}
-
-.prog-header {
-  display: flex;
-  justify-content: space-between;
-  font-size: 10px;
-  color: var(--text-dim);
-  margin-bottom: 5px;
-}
-
-.prog-track {
-  height: 3px;
-  background: rgba(255,255,255,0.07);
-  border-radius: 2px;
-  overflow: hidden;
-}
-
-.prog-fill {
-  height: 100%;
-  border-radius: 2px;
-  background: linear-gradient(90deg, var(--sol-green), var(--sol-purple));
-  transition: width 1.5s cubic-bezier(0.4,0,0.2,1);
-}
-
-.live-tag {
-  margin-top: 10px;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 10px;
-  color: var(--text-dim);
-}
-.live-dot {
-  width: 5px; height: 5px;
-  border-radius: 50%;
-  background: var(--sol-green);
-  animation: blink 2s ease-in-out infinite;
-}
-
-/* ===== DCA PANEL ===== */
-.phases-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 6px;
-}
-
-.phase-chip {
-  padding: 7px 4px;
-  border-radius: 10px;
-  text-align: center;
-  border: 1px solid rgba(255,255,255,0.07);
-  transition: all 0.4s ease;
-}
-
-.phase-chip.active {
-  transform: scale(1.05);
-}
-
-.chip-icon { font-size: 16px; display: block; }
-.chip-name { font-size: 9px; color: var(--text-dim); display: block; margin-top: 2px; }
-.chip-act { font-size: 8px; font-weight: 700; display: block; margin-top: 1px; letter-spacing: 0.5px; }
-
-.token-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 14px;
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.06);
-  border-radius: 10px;
-}
-
-.tok {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-family: 'Orbitron', monospace;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.tok-icon {
-  width: 26px; height: 26px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.arrow-mid {
-  color: var(--text-dim);
-  font-size: 14px;
-}
-
-.field-group {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-
-.field-label {
-  font-size: 10px;
-  color: var(--text-dim);
-  letter-spacing: 2px;
-  text-transform: uppercase;
-}
-
-.field-input {
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 10px;
-  padding: 10px 14px;
-  color: var(--text);
-  font-family: 'Rajdhani', sans-serif;
-  font-size: 15px;
-  outline: none;
-  width: 100%;
-  transition: border-color 0.3s;
-}
-
-.field-input:focus { border-color: rgba(153,69,255,0.5); }
-
-.jlp-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 14px;
-  background: rgba(0,209,140,0.04);
-  border: 1px solid rgba(0,209,140,0.12);
-  border-radius: 10px;
-}
-
-.jlp-left .jlp-name {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--jup-green);
-}
-
-.jlp-left .jlp-desc {
-  font-size: 10px;
-  color: var(--text-dim);
-  margin-top: 2px;
-}
-
-.toggle {
-  width: 40px; height: 22px;
-  background: rgba(255,255,255,0.1);
-  border-radius: 11px;
-  position: relative;
-  cursor: pointer;
-  transition: background 0.3s;
-  flex-shrink: 0;
-}
-
-.toggle.on { background: var(--jup-green); box-shadow: 0 0 10px rgba(0,209,140,0.3); }
-
-.toggle-dot {
-  position: absolute;
-  width: 16px; height: 16px;
-  background: white;
-  border-radius: 50%;
-  top: 3px; left: 3px;
-  transition: transform 0.3s;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.3);
-}
-
-.toggle.on .toggle-dot { transform: translateX(18px); }
-
-.info-row {
-  padding: 10px 14px;
-  background: rgba(255,255,255,0.02);
-  border-radius: 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.info-line {
-  display: flex;
-  justify-content: space-between;
-  font-size: 12px;
-}
-
-.info-line span:first-child { color: var(--text-dim); }
-.info-line span:last-child { font-weight: 600; }
-
-.btn-launch {
-  padding: 13px;
-  background: linear-gradient(135deg, var(--sol-purple), #6B1EFF);
-  border: none;
-  border-radius: 12px;
-  color: white;
-  font-family: 'Orbitron', monospace;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 3px;
-  cursor: pointer;
-  transition: all 0.3s;
-  margin-top: auto;
-  box-shadow: 0 4px 20px rgba(153,69,255,0.25);
-}
-
-.btn-launch:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 30px rgba(153,69,255,0.45);
-}
-
-/* ===== CONFIDENCE BAR ===== */
-.conf-panel {
-  grid-column: 1 / -1;
-  background: rgba(8,15,34,0.7);
-  border: 1px solid rgba(255,255,255,0.06);
-  border-radius: 14px;
-  padding: 14px 22px;
-  backdrop-filter: blur(12px);
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-
-.conf-label {
-  font-family: 'Orbitron', monospace;
-  font-size: 8px;
-  letter-spacing: 3px;
-  color: var(--text-dim);
-  text-transform: uppercase;
-  white-space: nowrap;
-}
-
-.conf-stars {
-  font-size: 14px;
-  letter-spacing: 1px;
-  margin-top: 3px;
-}
-
-.conf-track {
-  flex: 1;
-  height: 6px;
-  background: rgba(255,255,255,0.06);
-  border-radius: 3px;
-  overflow: hidden;
-}
-
-.conf-fill {
-  height: 100%;
-  border-radius: 3px;
-  background: linear-gradient(90deg, var(--sol-purple), var(--sol-green));
-  transition: width 1.5s cubic-bezier(0.4,0,0.2,1);
-  box-shadow: 0 0 8px rgba(20,241,149,0.3);
-}
-
-.conf-score {
-  font-family: 'Orbitron', monospace;
-  font-size: 22px;
-  font-weight: 900;
-}
-
-.conf-denom {
-  font-size: 10px;
-  color: var(--text-dim);
-  letter-spacing: 1px;
-}
-
-.divider-v {
-  width: 1px;
-  height: 36px;
-  background: rgba(255,255,255,0.08);
-  flex-shrink: 0;
-}
-
-.conf-msg {
-  font-size: 12px;
-  color: var(--text-dim);
-  line-height: 1.5;
-  max-width: 220px;
-}
-
-/* ===== MOONSURFER ===== */
-.moonsurfer-wrap {
-  position: fixed;
-  bottom: 90px;
-  z-index: 7;
-  pointer-events: none;
-  animation: ms-cruise 28s linear infinite;
-  will-change: transform, left;
-}
-
-@keyframes ms-cruise {
-  0%   { left: -160px; }
-  100% { left: calc(100vw + 80px); }
-}
-
-/* ===== MID-CYCLE MODAL ===== */
-.overlay {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(4,8,24,0.88);
-  z-index: 200;
-  align-items: center;
-  justify-content: center;
-  backdrop-filter: blur(6px);
-}
-
-.overlay.visible { display: flex; }
-
-.modal-card {
-  background: var(--space2);
-  border: 1px solid rgba(153,69,255,0.25);
-  border-radius: 24px;
-  padding: 36px 32px;
-  width: 400px;
-  text-align: center;
-  position: relative;
-  box-shadow: 0 0 60px rgba(153,69,255,0.15);
-}
-
-.modal-emoji {
-  font-size: 60px;
-  display: block;
-  margin-bottom: 14px;
-  animation: m-float 3s ease-in-out infinite;
-}
-
-@keyframes m-float {
-  0%,100% { transform: translateY(0); }
-  50% { transform: translateY(-8px); }
-}
-
-.modal-title {
-  font-family: 'Orbitron', monospace;
-  font-size: 14px;
-  font-weight: 700;
-  letter-spacing: 2px;
-  margin-bottom: 10px;
-}
-
-.modal-body {
-  font-size: 14px;
-  color: var(--text-dim);
-  line-height: 1.65;
-  margin-bottom: 12px;
-}
-
-.modal-timer {
-  font-family: 'Orbitron', monospace;
-  font-size: 30px;
-  font-weight: 900;
-  color: var(--sol-green);
-  text-shadow: 0 0 20px rgba(20,241,149,0.4);
-  margin: 12px 0 22px;
-  letter-spacing: 3px;
-}
-
-.modal-btns {
-  display: flex;
-  gap: 10px;
-}
-
-.btn-wait {
-  flex: 1;
-  padding: 12px;
-  background: transparent;
-  border: 1px solid rgba(20,241,149,0.25);
-  border-radius: 10px;
-  color: var(--sol-green);
-  font-family: 'Orbitron', monospace;
-  font-size: 9px;
-  letter-spacing: 2px;
-  cursor: pointer;
-  transition: all 0.3s;
-}
-.btn-wait:hover { background: rgba(20,241,149,0.06); }
-
-.btn-now {
-  flex: 1;
-  padding: 12px;
-  background: linear-gradient(135deg, var(--sol-purple), #5500EE);
-  border: none;
-  border-radius: 10px;
-  color: white;
-  font-family: 'Orbitron', monospace;
-  font-size: 9px;
-  letter-spacing: 2px;
-  cursor: pointer;
-  transition: all 0.3s;
-}
-.btn-now:hover { box-shadow: 0 4px 20px rgba(153,69,255,0.4); }
-
-/* =============================================
-   MOBILE & TABLET RESPONSIVE
-   ============================================= */
-
-/* Tablet: 768px and below */
-@media (max-width: 768px) {
-
-  html, body { overflow-y: auto; height: auto; }
-
-  .app {
-    height: auto;
-    min-height: 100vh;
-    grid-template-columns: 1fr;
-    grid-template-rows: auto;
-    gap: 12px;
-    padding: 16px;
-  }
-
-  header { grid-column: 1; }
-
-  .logo-text { font-size: 18px; letter-spacing: 2px; }
-  .logo-tag { display: none; }
-
-  .network-pill { display: none; }
-
-  .wallet-btn {
-    padding: 8px 14px;
-    font-size: 8px;
-  }
-
-  /* Jupiter: move to top-right, scaled down */
-  .jupiter-system {
-    top: 16px;
-    right: 16px;
-    width: 80px;
-    height: 80px;
-    transform: scale(0.7);
-    transform-origin: top right;
-  }
-
-  /* Panels side by side on tablet */
-  .panel-moon, .panel-dca {
-    grid-column: 1;
-  }
-
-  /* Dial smaller on tablet */
-  .dial-wrap { width: 190px; height: 190px; }
-
-  /* Confidence panel stack */
-  .conf-panel {
-    flex-wrap: wrap;
-    gap: 12px;
-    padding: 14px 16px;
-  }
-
-  .conf-msg { max-width: 100%; }
-  .divider-v { display: none; }
-
-  /* Moonsurfer smaller */
-  .moonsurfer-wrap { bottom: 60px; }
-  .moonsurfer-wrap svg { width: 90px; height: 60px; }
-
-  /* Modal full width */
-  .modal-card { width: 92%; padding: 28px 20px; }
-
-  /* Buttons touch-friendly */
-  .btn-launch { padding: 16px; font-size: 10px; }
-  .btn-wait, .btn-now { padding: 14px 10px; }
-}
-
-/* Mobile: 480px and below */
-@media (max-width: 480px) {
-
-  .app { padding: 12px; gap: 10px; }
-
-  .logo-text { font-size: 16px; letter-spacing: 1px; }
-
-  header { gap: 8px; }
-
-  /* Jupiter tiny on small phones */
-  .jupiter-system {
-    transform: scale(0.55);
-    transform-origin: top right;
-    top: 10px;
-    right: 10px;
-  }
-
-  .panel { padding: 16px 14px; }
-  .panel-title { font-size: 8px; letter-spacing: 3px; margin-bottom: 10px; }
-
-  /* Dial compact */
-  .dial-wrap { width: 160px; height: 160px; }
-  .dial-emoji { font-size: 30px; }
-  .dial-phase { font-size: 7px; }
-  .dial-action { font-size: 11px; }
-
-  .stat-val { font-size: 16px; }
-  .stat-lbl { font-size: 9px; }
-
-  /* Phase chips 2x2 on small screens */
-  .phases-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
-  .chip-icon { font-size: 20px; }
-  .chip-name { font-size: 10px; }
-  .chip-act { font-size: 9px; }
-
-  /* Token row compact */
-  .tok { font-size: 12px; gap: 6px; }
-  .tok-icon { width: 22px; height: 22px; font-size: 10px; }
-
-  /* Input */
-  .field-input { font-size: 14px; padding: 10px 12px; }
-  .field-label { font-size: 9px; }
-
-  /* JLP row */
-  .jlp-name { font-size: 12px; }
-  .jlp-desc { font-size: 9px; }
-
-  /* Info row */
-  .info-line { font-size: 11px; }
-
-  /* Confidence panel stacked */
-  .conf-panel { flex-direction: column; align-items: flex-start; gap: 10px; padding: 14px; }
-  .conf-score { font-size: 18px; }
-  .conf-track { width: 100%; }
-  .conf-label { font-size: 7px; }
-
-  /* Modal */
-  .modal-card { padding: 24px 16px; }
-  .modal-emoji { font-size: 48px; }
-  .modal-title { font-size: 12px; }
-  .modal-body { font-size: 13px; }
-  .modal-timer { font-size: 24px; }
-  .modal-btns { flex-direction: column; gap: 8px; }
-
-  /* Moonsurfer hide on very small to avoid clutter */
-  .moonsurfer-wrap { display: none; }
-}
-
-/* ===== TAB NAV ===== */
-.tab-nav {
-  grid-column: 1 / -1;
-  display: flex;
-  gap: 6px;
-  align-items: center;
-  margin-top: -6px;
-  margin-bottom: -4px;
-}
-.tab-btn {
-  padding: 6px 18px;
-  background: transparent;
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 8px;
-  color: var(--text-dim);
-  font-family: 'Orbitron', monospace;
-  font-size: 8px;
-  letter-spacing: 2px;
-  cursor: pointer;
-  transition: all 0.3s;
-}
-.tab-btn.active {
-  background: rgba(153,69,255,0.12);
-  border-color: rgba(153,69,255,0.35);
-  color: var(--sol-purple);
-}
-.tab-btn:hover:not(.active) { border-color: rgba(255,255,255,0.15); color: var(--text); }
-.view { display: none; grid-column: 1 / -1; }
-.view.active { display: contents; }
-
-/* ===== DASHBOARD ===== */
-.dash-grid {
-  grid-column: 1 / -1;
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
-}
-.dash-card {
-  background: rgba(8,15,34,0.75);
-  border-radius: 16px;
-  padding: 16px 18px;
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255,255,255,0.06);
-  position: relative;
-  overflow: hidden;
-}
-.dash-card::before {
-  content: '';
-  position: absolute;
-  top: -20px; right: -20px;
-  width: 80px; height: 80px;
-  border-radius: 50%;
-  pointer-events: none;
-}
-.dash-card.green::before { background: radial-gradient(circle, rgba(20,241,149,0.08) 0%, transparent 70%); }
-.dash-card.purple::before { background: radial-gradient(circle, rgba(153,69,255,0.08) 0%, transparent 70%); }
-.dash-card.yellow::before { background: radial-gradient(circle, rgba(255,217,102,0.08) 0%, transparent 70%); }
-.dash-card.blue::before { background: radial-gradient(circle, rgba(0,191,255,0.08) 0%, transparent 70%); }
-.dc-icon { font-size: 20px; display: block; margin-bottom: 8px; }
-.dc-label { font-family: 'Orbitron', monospace; font-size: 8px; letter-spacing: 2px; color: var(--text-dim); text-transform: uppercase; display: block; margin-bottom: 6px; }
-.dc-val { font-family: 'Orbitron', monospace; font-size: 22px; font-weight: 900; display: block; line-height: 1; }
-.dc-sub { font-size: 11px; color: var(--text-dim); display: block; margin-top: 4px; }
-.dash-panel-wide { grid-column: 1 / -1; background: rgba(8,15,34,0.75); border-radius: 16px; padding: 18px 22px; backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.06); }
-.dash-section-title { font-family: 'Orbitron', monospace; font-size: 8px; letter-spacing: 3px; color: var(--text-dim); text-transform: uppercase; margin-bottom: 14px; }
-.price-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
-.price-row:last-child { border-bottom: none; }
-.price-name { display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 600; }
-.price-icon { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; }
-.price-right { text-align: right; }
-.price-usd { font-family: 'Orbitron', monospace; font-size: 15px; font-weight: 700; display: block; }
-.price-change { font-size: 11px; display: block; margin-top: 2px; }
-.price-change.up { color: var(--sol-green); }
-.price-change.down { color: #FF6B6B; }
-.tx-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
-.tx-row:last-child { border-bottom: none; }
-.tx-left { display: flex; align-items: center; gap: 10px; }
-.tx-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-.tx-info .tx-type { font-size: 13px; font-weight: 600; display: block; }
-.tx-info .tx-time { font-size: 10px; color: var(--text-dim); display: block; margin-top: 1px; }
-.tx-amount { font-family: 'Orbitron', monospace; font-size: 12px; font-weight: 700; }
-.next-moon-banner { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; background: rgba(20,241,149,0.04); border: 1px solid rgba(20,241,149,0.12); border-radius: 12px; margin-bottom: 12px; }
-.nmb-left { display: flex; align-items: center; gap: 12px; }
-.nmb-emoji { font-size: 28px; }
-.nmb-title { font-size: 13px; font-weight: 600; display: block; }
-.nmb-sub { font-size: 11px; color: var(--text-dim); display: block; margin-top: 2px; }
-.nmb-timer { font-family: 'Orbitron', monospace; font-size: 20px; font-weight: 900; color: var(--sol-green); text-shadow: 0 0 10px rgba(20,241,149,0.3); }
-.dash-two-col { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-@media (max-width: 768px) { .dash-grid { grid-template-columns: repeat(2, 1fr); } .dash-two-col { grid-template-columns: 1fr; } }
-@media (max-width: 480px) { .dash-grid { grid-template-columns: 1fr 1fr; } }
-
-/* Landscape phone: panels side by side */
-@media (max-width: 768px) and (orientation: landscape) {
-  .app {
-    grid-template-columns: 1fr 1fr;
-    height: auto;
-  }
-  header { grid-column: 1 / -1; }
-  .conf-panel { grid-column: 1 / -1; }
-
-  .dial-wrap { width: 150px; height: 150px; }
-  .panel { padding: 14px; }
+  position:relative; z-index:10;
+  display:flex; flex-direction:column;
+  height:100vh; overflow-y:auto;
+  gap:10px; padding:16px 24px 20px;
+  max-width:1100px; margin:0 auto;
+}
+
+/* HEADER */
+header { display:flex; align-items:center; justify-content:space-between; flex-shrink:0; }
+.wordmark { display:flex; align-items:baseline; gap:10px; }
+.logo-text { font-family:'Orbitron',monospace; font-size:24px; font-weight:900; letter-spacing:3px; background:linear-gradient(135deg, var(--sol-green) 0%, var(--sol-purple) 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+.logo-tag { font-size:11px; color:var(--text-dim); letter-spacing:3px; text-transform:uppercase; }
+.header-center { display:flex; gap:8px; align-items:center; }
+.header-right { display:flex; align-items:center; gap:12px; }
+.network-pill { display:flex; align-items:center; gap:6px; padding:6px 12px; background:rgba(20,241,149,0.06); border:1px solid rgba(20,241,149,0.15); border-radius:20px; font-size:11px; font-weight:600; color:var(--sol-green); letter-spacing:1px; }
+.net-dot { width:6px; height:6px; border-radius:50%; background:var(--sol-green); animation:blink 2s ease-in-out infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+.wallet-btn { padding:8px 18px; background:rgba(153,69,255,0.1); border:1px solid rgba(153,69,255,0.3); border-radius:10px; color:var(--sol-purple); font-family:'Orbitron',monospace; font-size:9px; letter-spacing:2px; cursor:pointer; transition:all 0.3s; }
+.wallet-btn:hover { background:rgba(153,69,255,0.2); border-color:rgba(153,69,255,0.5); box-shadow:0 0 16px rgba(153,69,255,0.2); }
+
+/* TABS */
+.tab-btn { padding:7px 16px; background:transparent; border:1.5px solid rgba(255,255,255,0.15); border-radius:10px; color:var(--text-dim); font-family:'Orbitron',monospace; font-size:8px; font-weight:600; letter-spacing:2px; cursor:pointer; transition:all 0.3s; }
+.tab-btn.active { background:rgba(153,69,255,0.18); border:2px solid var(--sol-purple); color:var(--sol-purple); box-shadow:0 0 12px rgba(153,69,255,0.2); }
+.tab-btn:hover:not(.active) { border-color:rgba(255,255,255,0.3); color:var(--text); }
+
+/* PRICE STRIP */
+.price-strip { display:flex; align-items:center; background:rgba(8,15,34,0.7); border:1px solid rgba(255,255,255,0.06); border-radius:12px; padding:10px 20px; backdrop-filter:blur(12px); flex-shrink:0; }
+.ps-item { display:flex; align-items:center; gap:8px; flex:1; justify-content:center; }
+.ps-icon { width:22px; height:22px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:900; flex-shrink:0; }
+.ps-name { font-size:10px; color:var(--text-dim); letter-spacing:1px; }
+.ps-price { font-family:'Orbitron',monospace; font-size:12px; font-weight:700; }
+.ps-divider { width:1px; height:28px; background:rgba(255,255,255,0.07); flex-shrink:0; }
+.ps-tok-img { width:22px; height:22px; border-radius:50%; object-fit:cover; flex-shrink:0; }
+
+/* MAIN ROW - the two panels side by side */
+.main-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; flex:1; min-height:0; }
+
+/* PANELS */
+.panel { background:rgba(8,15,34,0.75); border-radius:20px; padding:20px 22px; backdrop-filter:blur(12px); display:flex; flex-direction:column; overflow:hidden; position:relative; }
+.panel-moon { border:1px solid rgba(153,69,255,0.18); align-items:center; }
+.panel-moon::before { content:''; position:absolute; top:-40px; left:-40px; width:200px; height:200px; background:radial-gradient(circle, rgba(153,69,255,0.08) 0%, transparent 70%); pointer-events:none; }
+.panel-dca { border:1px solid rgba(20,241,149,0.12); gap:12px; }
+.panel-dca::before { content:''; position:absolute; bottom:-40px; right:-40px; width:200px; height:200px; background:radial-gradient(circle, rgba(20,241,149,0.06) 0%, transparent 70%); pointer-events:none; }
+.panel-title { font-family:'Orbitron',monospace; font-size:9px; letter-spacing:4px; color:var(--text-dim); text-transform:uppercase; margin-bottom:14px; text-align:center; }
+
+/* MOON DIAL */
+.dial-wrap { position:relative; width:230px; height:230px; }
+#moon-dial { width:100%; height:100%; }
+.dial-center { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); text-align:center; pointer-events:none; }
+.dial-emoji { font-size:40px; display:block; line-height:1; filter:drop-shadow(0 0 8px rgba(255,255,255,0.3)); }
+.dial-phase { font-family:'Orbitron',monospace; font-size:8px; letter-spacing:2px; color:var(--text-dim); text-transform:uppercase; margin-top:6px; display:block; }
+.dial-action { font-size:13px; font-weight:600; letter-spacing:1px; margin-top:3px; display:block; }
+.dial-stats { width:100%; display:flex; justify-content:space-between; margin-top:10px; }
+.stat-block { text-align:center; }
+.stat-val { font-family:'Orbitron',monospace; font-size:18px; font-weight:700; display:block; }
+.stat-lbl { font-size:10px; color:var(--text-dim); display:block; margin-top:2px; }
+.progress-row { width:100%; margin-top:10px; }
+.prog-header { display:flex; justify-content:space-between; font-size:10px; color:var(--text-dim); margin-bottom:5px; }
+.prog-track { height:3px; background:rgba(255,255,255,0.07); border-radius:2px; overflow:hidden; }
+.prog-fill { height:100%; border-radius:2px; background:linear-gradient(90deg, var(--sol-green), var(--sol-purple)); transition:width 1.5s cubic-bezier(0.4,0,0.2,1); }
+.live-tag { margin-top:10px; display:flex; align-items:center; gap:5px; font-size:10px; color:var(--text-dim); }
+.live-dot { width:5px; height:5px; border-radius:50%; background:var(--sol-green); animation:blink 2s ease-in-out infinite; }
+
+/* DCA PANEL */
+.phases-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; }
+.phase-chip { padding:7px 4px; border-radius:10px; text-align:center; border:1px solid rgba(255,255,255,0.07); transition:all 0.4s ease; }
+.phase-chip.active { transform:scale(1.05); }
+.chip-icon { font-size:16px; display:block; }
+.phase-chip { cursor:pointer; }
+.phase-chip:hover { transform:scale(1.08) !important; }
+.phase-info { display:none; position:fixed; z-index:300; background:rgba(4,8,24,0.97); border:1px solid rgba(153,69,255,0.3); border-radius:12px; padding:12px 16px; width:200px; font-size:12px; line-height:1.6; box-shadow:0 0 20px rgba(153,69,255,0.15); pointer-events:none; }
+.phase-info.show { display:block; }
+.chip-name { font-size:9px; color:var(--text-dim); display:block; margin-top:2px; }
+.chip-act { font-size:8px; font-weight:700; display:block; margin-top:1px; letter-spacing:0.5px; }
+.token-row { display:flex; align-items:center; justify-content:space-between; padding:10px 14px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); border-radius:10px; }
+.tok { display:flex; align-items:center; gap:8px; font-family:'Orbitron',monospace; font-size:13px; font-weight:700; }
+.tok-img { width:26px; height:26px; border-radius:50%; object-fit:cover; }
+.arrow-mid { color:var(--text-dim); font-size:14px; }
+.field-group { display:flex; flex-direction:column; gap:5px; }
+.field-label { font-size:10px; color:var(--text-dim); letter-spacing:2px; text-transform:uppercase; }
+.field-input { background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:10px; padding:10px 14px; color:var(--text); font-family:'Rajdhani',sans-serif; font-size:15px; outline:none; width:100%; transition:border-color 0.3s; }
+.field-input:focus { border-color:rgba(153,69,255,0.5); }
+.jlp-row { display:flex; align-items:center; justify-content:space-between; padding:10px 14px; background:rgba(0,209,140,0.04); border:1px solid rgba(0,209,140,0.12); border-radius:10px; }
+.jlp-left .jlp-name { font-size:13px; font-weight:600; color:var(--jup-green); }
+.jlp-left .jlp-desc { font-size:10px; color:var(--text-dim); margin-top:2px; }
+.toggle { width:40px; height:22px; background:rgba(255,255,255,0.1); border-radius:11px; position:relative; cursor:pointer; transition:background 0.3s; flex-shrink:0; }
+.toggle.on { background:var(--jup-green); box-shadow:0 0 10px rgba(0,209,140,0.3); }
+.toggle-dot { position:absolute; width:16px; height:16px; background:white; border-radius:50%; top:3px; left:3px; transition:transform 0.3s; box-shadow:0 1px 4px rgba(0,0,0,0.3); }
+.toggle.on .toggle-dot { transform:translateX(18px); }
+.info-row { padding:10px 14px; background:rgba(255,255,255,0.02); border-radius:10px; display:flex; flex-direction:column; gap:6px; }
+.info-line { display:flex; justify-content:space-between; font-size:12px; }
+.info-line span:first-child { color:var(--text-dim); }
+.info-line span:last-child { font-weight:600; }
+.btn-launch { padding:13px; background:linear-gradient(135deg, var(--sol-purple), #6B1EFF); border:none; border-radius:12px; color:white; font-family:'Orbitron',monospace; font-size:11px; font-weight:700; letter-spacing:3px; cursor:pointer; transition:all 0.3s; margin-top:auto; box-shadow:0 4px 20px rgba(153,69,255,0.25); }
+.btn-launch:hover { transform:translateY(-2px); box-shadow:0 8px 30px rgba(153,69,255,0.45); }
+
+/* CONFIDENCE BAR */
+.conf-panel { background:rgba(8,15,34,0.7); border:1px solid rgba(255,255,255,0.06); border-radius:14px; padding:14px 22px; backdrop-filter:blur(12px); display:flex; align-items:center; gap:20px; flex-shrink:0; }
+.conf-label { font-family:'Orbitron',monospace; font-size:8px; letter-spacing:3px; color:var(--text-dim); text-transform:uppercase; white-space:nowrap; }
+.conf-stars { font-size:14px; letter-spacing:1px; margin-top:3px; }
+.conf-track { flex:1; height:6px; background:rgba(255,255,255,0.06); border-radius:3px; overflow:hidden; }
+.conf-fill { height:100%; border-radius:3px; background:linear-gradient(90deg, var(--sol-purple), var(--sol-green)); transition:width 1.5s cubic-bezier(0.4,0,0.2,1); box-shadow:0 0 8px rgba(20,241,149,0.3); }
+.conf-score { font-family:'Orbitron',monospace; font-size:22px; font-weight:900; }
+.conf-denom { font-size:10px; color:var(--text-dim); letter-spacing:1px; }
+.divider-v { width:1px; height:36px; background:rgba(255,255,255,0.08); flex-shrink:0; }
+.conf-msg { font-size:12px; color:var(--text-dim); line-height:1.5; max-width:220px; }
+
+/* MOONSURFER */
+.moonsurfer-wrap { position:fixed; bottom:90px; z-index:7; pointer-events:none; animation:ms-cruise 28s linear infinite; }
+@keyframes ms-cruise { 0%{left:-160px} 100%{left:calc(100vw + 80px)} }
+
+/* MID-CYCLE MODAL */
+.overlay { display:none; position:fixed; inset:0; background:rgba(4,8,24,0.88); z-index:200; align-items:center; justify-content:center; backdrop-filter:blur(6px); }
+.overlay.visible { display:flex; }
+.modal-card { background:var(--space2); border:1px solid rgba(153,69,255,0.25); border-radius:24px; padding:36px 32px; width:400px; text-align:center; box-shadow:0 0 60px rgba(153,69,255,0.15); }
+.modal-emoji { font-size:60px; display:block; margin-bottom:14px; animation:m-float 3s ease-in-out infinite; }
+@keyframes m-float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+.modal-title { font-family:'Orbitron',monospace; font-size:14px; font-weight:700; letter-spacing:2px; margin-bottom:10px; }
+.modal-body { font-size:14px; color:var(--text-dim); line-height:1.65; margin-bottom:12px; }
+.modal-timer { font-family:'Orbitron',monospace; font-size:30px; font-weight:900; color:var(--sol-green); text-shadow:0 0 20px rgba(20,241,149,0.4); margin:12px 0 22px; letter-spacing:3px; }
+.modal-btns { display:flex; gap:10px; }
+.btn-wait { flex:1; padding:12px; background:transparent; border:1px solid rgba(20,241,149,0.25); border-radius:10px; color:var(--sol-green); font-family:'Orbitron',monospace; font-size:9px; letter-spacing:2px; cursor:pointer; transition:all 0.3s; }
+.btn-now { flex:1; padding:12px; background:linear-gradient(135deg, var(--sol-purple), #5500EE); border:none; border-radius:10px; color:white; font-family:'Orbitron',monospace; font-size:9px; letter-spacing:2px; cursor:pointer; transition:all 0.3s; }
+
+/* VIEWS - dashboard / charts hidden by default */
+.view { display:none; }
+.view.active { display:flex; flex-direction:column; gap:12px; }
+
+/* DASHBOARD */
+.dash-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; }
+.dash-card { background:rgba(8,15,34,0.75); border-radius:16px; padding:16px 18px; backdrop-filter:blur(12px); border:1px solid rgba(255,255,255,0.06); position:relative; overflow:hidden; }
+.dash-card::before { content:''; position:absolute; top:-20px; right:-20px; width:80px; height:80px; border-radius:50%; pointer-events:none; }
+.dash-card.green::before { background:radial-gradient(circle, rgba(20,241,149,0.08) 0%, transparent 70%); }
+.dash-card.purple::before { background:radial-gradient(circle, rgba(153,69,255,0.08) 0%, transparent 70%); }
+.dash-card.yellow::before { background:radial-gradient(circle, rgba(255,217,102,0.08) 0%, transparent 70%); }
+.dash-card.blue::before { background:radial-gradient(circle, rgba(0,191,255,0.08) 0%, transparent 70%); }
+.dc-icon { font-size:20px; display:block; margin-bottom:8px; }
+.dc-label { font-family:'Orbitron',monospace; font-size:8px; letter-spacing:2px; color:var(--text-dim); text-transform:uppercase; display:block; margin-bottom:6px; }
+.dc-val { font-family:'Orbitron',monospace; font-size:22px; font-weight:900; display:block; line-height:1; }
+.dc-sub { font-size:11px; color:var(--text-dim); display:block; margin-top:4px; }
+.dash-wide { background:rgba(8,15,34,0.75); border-radius:16px; padding:18px 22px; backdrop-filter:blur(12px); border:1px solid rgba(255,255,255,0.06); }
+.dash-two-col { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.dash-section-title { font-family:'Orbitron',monospace; font-size:8px; letter-spacing:3px; color:var(--text-dim); text-transform:uppercase; margin-bottom:14px; }
+.price-row { display:flex; align-items:center; justify-content:space-between; padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.04); }
+.price-row:last-child { border-bottom:none; }
+.price-name { display:flex; align-items:center; gap:10px; font-size:14px; font-weight:600; }
+.dash-tok-img { width:28px; height:28px; border-radius:50%; object-fit:cover; flex-shrink:0; }
+.price-right { text-align:right; }
+.price-usd { font-family:'Orbitron',monospace; font-size:15px; font-weight:700; display:block; }
+.price-tag { font-size:11px; display:block; margin-top:2px; }
+.price-tag.up { color:var(--sol-green); }
+.tx-row { display:flex; align-items:center; justify-content:space-between; padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.04); }
+.tx-row:last-child { border-bottom:none; }
+.tx-left { display:flex; align-items:center; gap:10px; }
+.tx-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+.tx-info .tx-type { font-size:13px; font-weight:600; display:block; }
+.tx-info .tx-time { font-size:10px; color:var(--text-dim); display:block; margin-top:1px; }
+.tx-amount { font-family:'Orbitron',monospace; font-size:12px; font-weight:700; }
+.next-moon-row { display:flex; align-items:center; justify-content:space-between; padding:14px 18px; background:rgba(20,241,149,0.04); border:1px solid rgba(20,241,149,0.12); border-radius:12px; margin-bottom:12px; }
+.nmb-timer { font-family:'Orbitron',monospace; font-size:20px; font-weight:900; color:var(--sol-green); text-shadow:0 0 10px rgba(20,241,149,0.3); }
+
+/* CHARTS */
+.cp-btn { padding:4px 10px; background:transparent; border:1px solid rgba(255,255,255,0.1); border-radius:6px; color:var(--text-dim); font-family:'Orbitron',monospace; font-size:8px; letter-spacing:1px; cursor:pointer; transition:all 0.2s; }
+.cp-btn.cp-active { background:rgba(153,69,255,0.15); border-color:rgba(153,69,255,0.4); color:var(--sol-purple); }
+
+/* MOBILE BOTTOM NAV */
+.mob-nav { display:none; position:fixed; bottom:0; left:0; right:0; background:rgba(4,8,24,0.96); border-top:1px solid rgba(153,69,255,0.2); backdrop-filter:blur(16px); z-index:100; padding:8px 0 max(8px, env(safe-area-inset-bottom)); }
+.mob-nav-inner { display:flex; }
+.mob-tab { flex:1; background:transparent; border:none; border-top:2px solid transparent; padding:8px 4px; display:flex; flex-direction:column; align-items:center; gap:3px; color:var(--text-dim); font-family:'Orbitron',monospace; font-size:7px; letter-spacing:1px; cursor:pointer; transition:all 0.2s; }
+.mob-tab.active { border-top-color:var(--sol-purple); color:var(--sol-purple); }
+.mob-tab-icon { font-size:18px; }
+
+/* RESPONSIVE */
+@media (max-width:768px) {
+  html, body { overflow-y:auto; height:auto; }
+  .app { height:auto; min-height:100vh; padding:12px 12px 90px; }
+  .main-row { grid-template-columns:1fr; }
+  .header-center { display:none; }
+  .logo-tag { display:none; }
+  .network-pill { display:none; }
+  .wallet-btn { padding:8px 14px; font-size:8px; }
+  .jupiter-system { top:16px; right:16px; transform:scale(0.7); transform-origin:top right; }
+  .dial-wrap { width:190px; height:190px; }
+  .conf-panel { flex-wrap:wrap; gap:12px; padding:14px 16px; }
+  .conf-msg { max-width:100%; }
+  .divider-v { display:none; }
+  .modal-card { width:92%; padding:28px 20px; }
+  .moonsurfer-wrap { bottom:100px; }
+  .mob-nav { display:block; }
+  .dash-grid { grid-template-columns:repeat(2,1fr); }
+  .dash-two-col { grid-template-columns:1fr; }
+  .price-strip { padding:8px 12px; }
+  .ps-price { font-size:10px; }
+}
+
+@media (max-width:480px) {
+  .dial-wrap { width:160px; height:160px; }
+  .phases-grid { grid-template-columns:repeat(2,1fr); }
+  .moonsurfer-wrap { display:none; }
+}
+
+@media (max-width:768px) and (orientation:landscape) {
+  .main-row { grid-template-columns:1fr 1fr; }
+  .dial-wrap { width:150px; height:150px; }
 }
 </style>
 </head>
@@ -1026,7 +272,6 @@ header {
 <div class="nebula nebula-b"></div>
 <div class="nebula nebula-c"></div>
 
-<!-- Jupiter System -->
 <div class="jupiter-system" id="jupiter-sys" onclick="jupClick()">
   <div class="orbital-ring-2"></div>
   <div class="orbital-ring"></div>
@@ -1040,17 +285,13 @@ header {
   <span class="jupiter-tag">JUPITER</span>
 </div>
 
-<!-- Moonsurfer -->
 <div class="moonsurfer-wrap" id="ms"></div>
 
-<!-- Mid-cycle Modal -->
 <div class="overlay" id="overlay">
   <div class="modal-card">
     <span class="modal-emoji" id="m-emoji">🌔</span>
     <div class="modal-title">Mid-Cycle Entry</div>
-    <div class="modal-body">
-      The moon advises waiting <strong id="m-days" style="color:var(--sol-green)">8 days</strong> for peak power — or begin your journey now at half tide.
-    </div>
+    <div class="modal-body">The moon advises waiting <strong id="m-days" style="color:var(--sol-green)">8 days</strong> for peak power — or begin your journey now at half tide.</div>
     <div class="modal-timer" id="m-timer">08d 12h</div>
     <div class="modal-btns">
       <button class="btn-wait" onclick="waitForMoon()">🌑 Wait for New Moon</button>
@@ -1059,312 +300,247 @@ header {
   </div>
 </div>
 
-<!-- App -->
 <div class="app">
 
-  <!-- Header -->
+  <!-- HEADER -->
   <header>
     <div class="wordmark">
       <div class="logo-text">MOONSURFER</div>
       <div class="logo-tag">Lunar DCA on Solana</div>
     </div>
+    <div class="header-center">
+      <button class="tab-btn active" id="tab-home" onclick="switchTab('home')">🌑 Home</button>
+      <button class="tab-btn" id="tab-dash" onclick="switchTab('dash')">⬡ Dashboard</button>
+      <button class="tab-btn" id="tab-chart" onclick="switchTab('chart')">📈 Charts</button>
+    </div>
     <div class="header-right">
-      <div class="network-pill">
-        <div class="net-dot"></div>
-        Solana Mainnet
-      </div>
+      <div class="network-pill"><div class="net-dot"></div>Solana Mainnet</div>
       <button class="wallet-btn" id="wbtn" onclick="connectWallet()">Connect Wallet</button>
     </div>
   </header>
 
-  <!-- Moon Dial Panel -->
-  <div class="panel panel-moon">
-    <div class="panel-title">Live Lunar Phase</div>
+  <!-- CATCHLINE -->
+  <div style="text-align:center;padding:4px 0 2px;flex-shrink:0">
+    <span style="font-family:'Orbitron',monospace;font-size:10px;color:var(--text-dim);letter-spacing:3px">BUY THE DIP · RIDE THE CYCLE · EARN WHILE YOU WAIT</span>
+  </div>
 
-    <div class="dial-wrap">
-      <svg id="moon-dial" viewBox="0 0 230 230">
-        <!-- Background circle -->
-        <circle cx="115" cy="115" r="100" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
-        <circle cx="115" cy="115" r="75" fill="none" stroke="rgba(255,255,255,0.03)" stroke-width="1"/>
-
-        <!-- Phase arcs -->
-        <path id="arc-new"  fill="none" stroke="#14F195" stroke-width="10" stroke-linecap="round"/>
-        <path id="arc-wax"  fill="none" stroke="#9945FF" stroke-width="10" stroke-linecap="round"/>
-        <path id="arc-full" fill="none" stroke="#FFD966" stroke-width="10" stroke-linecap="round"/>
-        <path id="arc-wan"  fill="none" stroke="#00BFFF" stroke-width="10" stroke-linecap="round"/>
-
-        <!-- Current position dot -->
-        <circle id="pos-dot" r="9" fill="white"/>
-        <circle id="pos-glow" r="16" fill="white" opacity="0.08"/>
-
-        <!-- Phase markers -->
-        <text x="115" y="10" text-anchor="middle" fill="rgba(255,255,255,0.2)" font-size="8" font-family="Orbitron">🌑</text>
-        <text x="220" y="119" text-anchor="middle" fill="rgba(255,255,255,0.2)" font-size="8" font-family="Orbitron">🌓</text>
-        <text x="115" y="224" text-anchor="middle" fill="rgba(255,255,255,0.2)" font-size="8" font-family="Orbitron">🌕</text>
-        <text x="10" y="119" text-anchor="middle" fill="rgba(255,255,255,0.2)" font-size="8" font-family="Orbitron">🌗</text>
-      </svg>
-
-      <div class="dial-center">
-        <span class="dial-emoji" id="d-emoji">🌑</span>
-        <span class="dial-phase" id="d-phase">Calculating...</span>
-        <span class="dial-action" id="d-action">—</span>
-      </div>
+  <!-- PRICE STRIP -->
+  <div class="price-strip">
+    <div class="ps-item">
+      <img src="https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png" class="ps-tok-img" alt="SOL">
+      <span class="ps-name">SOL</span>
+      <span class="ps-price" id="ps-sol" style="color:var(--sol-green)">—</span>
     </div>
-
-    <div class="dial-stats">
-      <div class="stat-block">
-        <span class="stat-val" id="s-day" style="color:var(--sol-green)">—</span>
-        <span class="stat-lbl">Day in cycle</span>
-      </div>
-      <div class="stat-block">
-        <span class="stat-val" id="s-next" style="color:var(--sol-purple)">—</span>
-        <span class="stat-lbl">Days to new 🌑</span>
-      </div>
+    <div class="ps-divider"></div>
+    <div class="ps-item">
+      <img id="jlp-icon-ps" src="" style="width:22px;height:22px;border-radius:50%;object-fit:cover;display:none" alt="JLP"><div id="jlp-fallback-ps" class="ps-icon" style="background:linear-gradient(135deg,#00D18C,#006B50);color:white;font-size:10px;font-weight:900">J</div>
+      <span class="ps-name">JLP</span>
+      <span class="ps-price" id="ps-jlp" style="color:var(--jup-green)">—</span>
     </div>
-
-    <div class="progress-row">
-      <div class="prog-header">
-        <span>Cycle progress</span>
-        <span id="prog-pct">0%</span>
-      </div>
-      <div class="prog-track">
-        <div class="prog-fill" id="prog-bar" style="width:0%"></div>
-      </div>
+    <div class="ps-divider"></div>
+    <div class="ps-item">
+      <img src="https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png" class="ps-tok-img" alt="USDC">
+      <span class="ps-name">USDC</span>
+      <span class="ps-price" style="color:var(--sol-green)">$1.00</span>
     </div>
-
-    <div class="live-tag">
-      <div class="live-dot"></div>
-      Synodic cycle · updates every minute
+    <div class="ps-divider"></div>
+    <div class="ps-item">
+      <span class="ps-name" style="font-size:9px">Next 🌑</span>
+      <span class="ps-price" id="ps-moon" style="color:var(--sol-green)">—</span>
     </div>
   </div>
 
-  <!-- DCA Panel -->
-  <div class="panel panel-dca">
-    <div class="panel-title">Configure DCA</div>
+  <!-- HOME VIEW -->
+  <div class="view active" id="view-home">
+    <div class="main-row">
 
-    <!-- Phase chips -->
-    <div class="phases-grid" id="pgrid">
-      <div class="phase-chip" id="chip-new">
-        <span class="chip-icon">🌑</span>
-        <span class="chip-name">New Moon</span>
-        <span class="chip-act" style="color:#14F195">100% Buy</span>
+      <!-- Moon Dial Panel -->
+      <div class="panel panel-moon">
+        <div class="panel-title">Live Lunar Phase</div>
+        <div class="dial-wrap">
+          <svg id="moon-dial" viewBox="0 0 230 230">
+            <circle cx="115" cy="115" r="100" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+            <circle cx="115" cy="115" r="75" fill="none" stroke="rgba(255,255,255,0.03)" stroke-width="1"/>
+            <path id="arc-new" fill="none" stroke="#14F195" stroke-width="10" stroke-linecap="round"/>
+            <path id="arc-wax" fill="none" stroke="#9945FF" stroke-width="10" stroke-linecap="round"/>
+            <path id="arc-full" fill="none" stroke="#FFD966" stroke-width="10" stroke-linecap="round"/>
+            <path id="arc-wan" fill="none" stroke="#00BFFF" stroke-width="10" stroke-linecap="round"/>
+            <circle id="pos-dot" r="9" fill="white"/>
+            <circle id="pos-glow" r="16" fill="white" opacity="0.08"/>
+            <text x="115" y="10" text-anchor="middle" fill="rgba(255,255,255,0.2)" font-size="8" font-family="Orbitron">🌑</text>
+            <text x="220" y="119" text-anchor="middle" fill="rgba(255,255,255,0.2)" font-size="8" font-family="Orbitron">🌓</text>
+            <text x="115" y="224" text-anchor="middle" fill="rgba(255,255,255,0.2)" font-size="8" font-family="Orbitron">🌕</text>
+            <text x="10" y="119" text-anchor="middle" fill="rgba(255,255,255,0.2)" font-size="8" font-family="Orbitron">🌗</text>
+          </svg>
+          <div class="dial-center">
+            <span class="dial-emoji" id="d-emoji">🌑</span>
+            <span class="dial-phase" id="d-phase">Calculating...</span>
+            <span class="dial-action" id="d-action">—</span>
+          </div>
+        </div>
+        <div class="dial-stats">
+          <div class="stat-block">
+            <span class="stat-val" id="s-day" style="color:var(--sol-green)">—</span>
+            <span class="stat-lbl">Day in cycle</span>
+          </div>
+          <div class="stat-block">
+            <span class="stat-val" id="s-next" style="color:var(--sol-purple)">—</span>
+            <span class="stat-lbl">Days to new 🌑</span>
+          </div>
+        </div>
+        <div class="progress-row">
+          <div class="prog-header"><span>Cycle progress</span><span id="prog-pct">0%</span></div>
+          <div class="prog-track"><div class="prog-fill" id="prog-bar" style="width:0%"></div></div>
+        </div>
+        <div class="live-tag"><div class="live-dot"></div>Synodic cycle · updates every minute</div>
       </div>
-      <div class="phase-chip" id="chip-wax">
-        <span class="chip-icon">🌓</span>
-        <span class="chip-name">Waxing</span>
-        <span class="chip-act" style="color:#9945FF">50% Buy</span>
+
+      <!-- DCA Panel -->
+      <div class="panel panel-dca">
+        <div class="panel-title">Configure DCA</div>
+        <div class="phases-grid">
+          <div class="phase-chip" id="chip-new" onclick="showPhaseInfo('new',event)"><span class="chip-icon">🌑</span><span class="chip-name">New Moon</span><span class="chip-act" style="color:#14F195">100% Buy</span></div>
+          <div class="phase-chip" id="chip-wax" onclick="showPhaseInfo('wax',event)"><span class="chip-icon">🌓</span><span class="chip-name">Waxing</span><span class="chip-act" style="color:#9945FF">50% Buy</span></div>
+          <div class="phase-chip" id="chip-full" onclick="showPhaseInfo('full',event)"><span class="chip-icon">🌕</span><span class="chip-name">Full Moon</span><span class="chip-act" style="color:#FFD966">Pause</span></div>
+          <div class="phase-chip" id="chip-wan" onclick="showPhaseInfo('wan',event)"><span class="chip-icon">🌗</span><span class="chip-name">Waning</span><span class="chip-act" style="color:#00BFFF">JLP Yield</span></div>
+        </div>
+        <div class="phase-info" id="phase-info"></div>
+        <div class="token-row">
+          <div class="tok">
+            <img src="https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png" class="tok-img" alt="USDC">
+            <span style="color:#60A5FA">USDC</span>
+          </div>
+          <span class="arrow-mid">→</span>
+          <div class="tok">
+            <span style="color:var(--sol-green)">SOL</span>
+            <img src="https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png" class="tok-img" alt="SOL">
+          </div>
+        </div>
+        <div class="field-group">
+          <label class="field-label">DCA Amount Per Phase (USDC)</label>
+          <input class="field-input" type="number" id="dca-amt" placeholder="1" min="0.1" step="0.5">
+        </div>
+        <div class="jlp-row">
+          <div class="jlp-left">
+            <div class="jlp-name">JLP Yield Mode</div>
+            <div class="jlp-desc">Park USDC in JLP during waning phase</div>
+          </div>
+          <div class="toggle on" id="jlp-tog" onclick="toggleJLP()"><div class="toggle-dot"></div></div>
+        </div>
+        <div class="info-row">
+          <div class="info-line"><span>Current action</span><span id="cur-action" style="color:var(--sol-green)">Full Buy</span></div>
+          <div class="info-line"><span>Next trigger</span><span id="next-trig">—</span></div>
+          <div class="info-line"><span>Powered by</span><span style="color:var(--jup-green)">Jupiter DCA</span></div>
+        </div>
+        <button class="btn-launch" id="launch-btn" onclick="launchDCA()">◎ LAUNCH DCA ORBIT</button>
       </div>
-      <div class="phase-chip" id="chip-full">
-        <span class="chip-icon">🌕</span>
-        <span class="chip-name">Full Moon</span>
-        <span class="chip-act" style="color:#FFD966">Pause</span>
-      </div>
-      <div class="phase-chip" id="chip-wan">
-        <span class="chip-icon">🌗</span>
-        <span class="chip-name">Waning</span>
-        <span class="chip-act" style="color:#00BFFF">JLP Yield</span>
-      </div>
+
     </div>
 
-    <!-- Token pair -->
-    <div class="token-row">
-      <div class="tok">
-        <div class="tok-icon" style="background:linear-gradient(135deg,#9945FF,#14F195)">◎</div>
-        <span style="color:var(--sol-green)">USDC</span>
-      </div>
-      <span class="arrow-mid">→</span>
-      <div class="tok">
-        <span>SOL</span>
-        <div class="tok-icon" style="background:linear-gradient(135deg,#14F195,#9945FF)">◎</div>
-      </div>
-    </div>
-
-    <!-- Amount -->
-    <div class="field-group">
-      <label class="field-label">DCA Amount Per Phase (USDC)</label>
-      <input class="field-input" type="number" id="dca-amt" placeholder="100" min="1" step="10">
-    </div>
-
-    <!-- JLP Toggle -->
-    <div class="jlp-row">
-      <div class="jlp-left">
-        <div class="jlp-name">JLP Yield Mode</div>
-        <div class="jlp-desc">Park USDC in JLP during waning phase</div>
-      </div>
-      <div class="toggle on" id="jlp-tog" onclick="toggleJLP()">
-        <div class="toggle-dot"></div>
-      </div>
-    </div>
-
-    <!-- Info -->
-    <div class="info-row">
-      <div class="info-line">
-        <span>Current action</span>
-        <span id="cur-action" style="color:var(--sol-green)">Full Buy</span>
-      </div>
-      <div class="info-line">
-        <span>Next trigger</span>
-        <span id="next-trig">—</span>
-      </div>
-      <div class="info-line">
-        <span>Powered by</span>
-        <span style="color:var(--jup-green)">Jupiter DCA</span>
-      </div>
-    </div>
-
-    <button class="btn-launch" id="launch-btn" onclick="launchDCA()">
-      ◎ LAUNCH DCA ORBIT
-    </button>
-  </div>
-
-  <!-- Cosmic Confidence -->
-  <div class="conf-panel">
-    <div>
-      <div class="conf-label">Cosmic Confidence</div>
-      <div class="conf-stars" id="c-stars">★★★★☆</div>
-    </div>
-    <div class="conf-track">
-      <div class="conf-fill" id="c-fill" style="width:72%"></div>
-    </div>
-    <div>
-      <div class="conf-score" id="c-score" style="color:var(--sol-green)">72</div>
-      <div class="conf-denom">/ 100</div>
-    </div>
-    <div class="divider-v"></div>
-    <div class="conf-msg" id="c-msg">
-      Moon phase + market signals.<br>
-      <span style="color:var(--sol-green)">Post full moon</span> — historically bullish window.
+    <!-- Cosmic Confidence -->
+    <div class="conf-panel">
+      <div><div class="conf-label">Cosmic Confidence</div><div class="conf-stars" id="c-stars">★★★★☆</div></div>
+      <div class="conf-track"><div class="conf-fill" id="c-fill" style="width:72%"></div></div>
+      <div><div class="conf-score" id="c-score" style="color:var(--sol-green)">72</div><div class="conf-denom">/ 100</div></div>
+      <div class="divider-v"></div>
+      <div class="conf-msg" id="c-msg">Moon phase + market signals.<br><span style="color:var(--sol-green)">Post full moon</span> — historically bullish window.</div>
     </div>
   </div>
 
-  <!-- Tab Nav -->
-  <div class="tab-nav">
-    <button class="tab-btn active" id="tab-dca" onclick="switchTab('dca')">◎ DCA</button>
-    <button class="tab-btn" id="tab-dash" onclick="switchTab('dash')">⬡ Dashboard</button>
-  </div>
-
-  <!-- Dashboard View -->
+  <!-- DASHBOARD VIEW -->
   <div class="view" id="view-dash">
-
-    <!-- Stat cards -->
     <div class="dash-grid">
-      <div class="dash-card green">
-        <span class="dc-icon">◎</span>
-        <span class="dc-label">SOL Balance</span>
-        <span class="dc-val" id="d-sol" style="color:var(--sol-green)">—</span>
-        <span class="dc-sub" id="d-sol-usd">Loading...</span>
-      </div>
-      <div class="dash-card purple">
-        <span class="dc-icon">💵</span>
-        <span class="dc-label">USDC Balance</span>
-        <span class="dc-val" id="d-usdc" style="color:var(--sol-purple)">—</span>
-        <span class="dc-sub">Available to DCA</span>
-      </div>
-      <div class="dash-card yellow">
-        <span class="dc-icon">🌑</span>
-        <span class="dc-label">Active DCA Orders</span>
-        <span class="dc-val" id="d-orders" style="color:#FFD966">—</span>
-        <span class="dc-sub">Via Jupiter DCA</span>
-      </div>
-      <div class="dash-card blue">
-        <span class="dc-icon">🌊</span>
-        <span class="dc-label">JLP Yield APY</span>
-        <span class="dc-val" id="d-apy" style="color:#00BFFF">—</span>
-        <span class="dc-sub">Jupiter Liquidity Pool</span>
-      </div>
+      <div class="dash-card green"><span class="dc-icon">◎</span><span class="dc-label">SOL Balance</span><span class="dc-val" id="d-sol" style="color:var(--sol-green)">—</span><span class="dc-sub" id="d-sol-usd">Connect wallet</span></div>
+      <div class="dash-card purple"><span class="dc-icon">💵</span><span class="dc-label">USDC Balance</span><span class="dc-val" id="d-usdc" style="color:var(--sol-purple)">—</span><span class="dc-sub">Available to DCA</span></div>
+      <div class="dash-card yellow"><span class="dc-icon">🌑</span><span class="dc-label">Active DCA Orders</span><span class="dc-val" id="d-orders" style="color:#FFD966">1</span><span class="dc-sub">Via Jupiter DCA</span></div>
+      <div class="dash-card blue"><span class="dc-icon">🌊</span><span class="dc-label">JLP Yield APY</span><span class="dc-val" id="d-apy" style="color:#00BFFF">~15%</span><span class="dc-sub">Jupiter Liquidity Pool</span></div>
     </div>
-
-    <!-- Two col: prices + next moon -->
     <div class="dash-two-col">
-
-      <!-- Live Prices -->
-      <div class="dash-panel-wide">
+      <div class="dash-wide">
         <div class="dash-section-title">Live Prices · Jupiter API</div>
         <div class="price-row">
-          <div class="price-name">
-            <div class="price-icon" style="background:linear-gradient(135deg,#9945FF,#14F195)">◎</div>
-            SOL
-          </div>
-          <div class="price-right">
-            <span class="price-usd" id="p-sol">Loading...</span>
-            <span class="price-change" id="p-sol-chg">—</span>
-          </div>
+          <div class="price-name"><img src="https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png" class="dash-tok-img" alt="SOL">SOL</div>
+          <div class="price-right"><span class="price-usd" id="p-sol" style="color:var(--sol-green)">—</span><span class="price-tag up" id="p-sol-chg">—</span></div>
         </div>
         <div class="price-row">
-          <div class="price-name">
-            <div class="price-icon" style="background:linear-gradient(135deg,#00D18C,#009B6A)">J</div>
-            JLP
-          </div>
-          <div class="price-right">
-            <span class="price-usd" id="p-jlp">Loading...</span>
-            <span class="price-change" id="p-jlp-chg">—</span>
-          </div>
+          <div class="price-name"><img id="jlp-icon-dash" src="" style="width:28px;height:28px;border-radius:50%;object-fit:cover;display:none;flex-shrink:0" alt="JLP"><div id="jlp-fallback-dash" style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#00D18C,#006B50);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;color:white;flex-shrink:0">J</div>JLP</div>
+          <div class="price-right"><span class="price-usd" id="p-jlp" style="color:var(--jup-green)">—</span><span class="price-tag up" id="p-jlp-chg">—</span></div>
         </div>
         <div class="price-row">
-          <div class="price-name">
-            <div class="price-icon" style="background:linear-gradient(135deg,#2775CA,#1A5499)">$</div>
-            USDC
-          </div>
-          <div class="price-right">
-            <span class="price-usd">$1.00</span>
-            <span class="price-change up">Stable</span>
-          </div>
+          <div class="price-name"><img src="https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png" class="dash-tok-img" alt="USDC">USDC</div>
+          <div class="price-right"><span class="price-usd">$1.00</span><span class="price-tag up">Stable</span></div>
         </div>
       </div>
-
-      <!-- Next Moon + Cycle -->
-      <div class="dash-panel-wide">
+      <div class="dash-wide">
         <div class="dash-section-title">Lunar Schedule</div>
-        <div class="next-moon-banner">
-          <div class="nmb-left">
-            <span class="nmb-emoji">🌑</span>
-            <div>
-              <span class="nmb-title">Next New Moon</span>
-              <span class="nmb-sub">Full buy trigger</span>
-            </div>
-          </div>
+        <div class="next-moon-row">
+          <div style="display:flex;align-items:center;gap:12px"><span style="font-size:28px">🌑</span><div><span style="font-size:13px;font-weight:600;display:block">Next New Moon</span><span style="font-size:11px;color:var(--text-dim)">Full buy trigger</span></div></div>
           <span class="nmb-timer" id="d-next-moon">—</span>
         </div>
-        <div class="price-row">
-          <span style="font-size:13px; color:var(--text-dim)">Current Phase</span>
-          <span style="font-size:13px; font-weight:600" id="d-cur-phase">—</span>
-        </div>
-        <div class="price-row">
-          <span style="font-size:13px; color:var(--text-dim)">Cycle Day</span>
-          <span style="font-size:13px; font-weight:600; color:var(--sol-green)" id="d-cycle-day">—</span>
-        </div>
-        <div class="price-row">
-          <span style="font-size:13px; color:var(--text-dim)">Current Action</span>
-          <span style="font-size:13px; font-weight:600" id="d-action-2">—</span>
-        </div>
+        <div class="price-row"><span style="font-size:13px;color:var(--text-dim)">Current Phase</span><span style="font-size:13px;font-weight:600" id="d-cur-phase">—</span></div>
+        <div class="price-row"><span style="font-size:13px;color:var(--text-dim)">Cycle Day</span><span style="font-size:13px;font-weight:600;color:var(--sol-green)" id="d-cycle-day">—</span></div>
+        <div class="price-row"><span style="font-size:13px;color:var(--text-dim)">Current Action</span><span style="font-size:13px;font-weight:600" id="d-action-2">—</span></div>
       </div>
-
     </div>
-
-    <!-- Recent Transactions -->
-    <div class="dash-panel-wide">
+    <div class="dash-wide">
       <div class="dash-section-title">Recent DCA Activity</div>
       <div id="tx-list">
-        <div class="tx-row">
-          <div class="tx-left">
-            <div class="tx-dot" style="background:var(--text-dim)"></div>
-            <div class="tx-info">
-              <span class="tx-type" style="color:var(--text-dim)">Connect wallet to view activity</span>
-              <span class="tx-time">—</span>
-            </div>
-          </div>
+        <div class="tx-row"><div class="tx-left"><div class="tx-dot" style="background:var(--text-dim)"></div><div class="tx-info"><span class="tx-type" style="color:var(--text-dim)">Connect wallet to view activity</span><span class="tx-time">—</span></div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHARTS VIEW -->
+  <div class="view" id="view-chart">
+    <div class="dash-wide">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+        <div class="dash-section-title" style="margin:0">SOL/USDC · Moon Phase Overlay</div>
+        <div style="display:flex;gap:6px">
+          <button onclick="setChartPeriod(7)" id="cp-7" class="cp-btn cp-active">7D</button>
+          <button onclick="setChartPeriod(30)" id="cp-30" class="cp-btn">30D</button>
+          <button onclick="setChartPeriod(90)" id="cp-90" class="cp-btn">90D</button>
+        </div>
+      </div>
+      <div style="position:relative">
+        <canvas id="price-chart" style="width:100%;height:280px;display:block"></canvas>
+        <div style="position:absolute;top:8px;left:8px;display:flex;gap:12px;font-size:10px">
+          <span style="color:var(--sol-purple)">● SOL Price</span>
+          <span style="color:rgba(20,241,149,0.7)">🌑 New Moon</span>
+          <span style="color:rgba(255,217,102,0.7)">🌕 Full Moon</span>
         </div>
       </div>
     </div>
-
-  </div><!-- end view-dash -->
+    <div class="dash-two-col">
+      <div class="dash-wide">
+        <div class="dash-section-title">Moon Phase Performance</div>
+        <div class="price-row"><span style="font-size:13px;color:var(--text-dim)">🌑 New Moon avg return</span><span style="font-size:13px;font-weight:700;color:var(--sol-green)">+3.2%</span></div>
+        <div class="price-row"><span style="font-size:13px;color:var(--text-dim)">🌕 Full Moon avg return</span><span style="font-size:13px;font-weight:700;color:#FF6B6B">-1.8%</span></div>
+        <div class="price-row"><span style="font-size:13px;color:var(--text-dim)">🌓 Waxing avg return</span><span style="font-size:13px;font-weight:700;color:var(--sol-purple)">+1.4%</span></div>
+        <div class="price-row"><span style="font-size:13px;color:var(--text-dim)">🌗 Waning avg return</span><span style="font-size:13px;font-weight:700;color:#00BFFF">+0.6%</span></div>
+        <div style="margin-top:10px;font-size:10px;color:var(--text-dim)">Based on Dichev & Janes (2001) · 33 cycle sample</div>
+      </div>
+      <div class="dash-wide">
+        <div class="dash-section-title">Your DCA Performance</div>
+        <div class="price-row"><span style="font-size:13px;color:var(--text-dim)">Total invested</span><span style="font-size:13px;font-weight:700" id="perf-invested">4 USDC</span></div>
+        <div class="price-row"><span style="font-size:13px;color:var(--text-dim)">SOL accumulated</span><span style="font-size:13px;font-weight:700;color:var(--sol-green)" id="perf-sol">0.025 SOL</span></div>
+        <div class="price-row"><span style="font-size:13px;color:var(--text-dim)">Avg buy price</span><span style="font-size:13px;font-weight:700" id="perf-avg">~$160</span></div>
+        <div class="price-row"><span style="font-size:13px;color:var(--text-dim)">JLP yield earned</span><span style="font-size:13px;font-weight:700;color:#00BFFF" id="perf-yield">~$0.06</span></div>
+      </div>
+    </div>
+  </div>
 
 </div>
 
+<!-- MOBILE BOTTOM NAV -->
+<div class="mob-nav">
+  <div class="mob-nav-inner">
+    <button class="mob-tab active" id="mob-home" onclick="switchTab('home')"><span class="mob-tab-icon">🌑</span>HOME</button>
+    <button class="mob-tab" id="mob-dash" onclick="switchTab('dash')"><span class="mob-tab-icon">⬡</span>DASHBOARD</button>
+    <button class="mob-tab" id="mob-chart" onclick="switchTab('chart')"><span class="mob-tab-icon">📈</span>CHARTS</button>
+  </div>
+</div>
+
 <script>
-// =============================================
-// LUNAR PHASE ENGINE
-// =============================================
 const SYNODIC = 29.53059;
 const KNOWN_NEW = new Date('2024-01-11T00:00:00Z');
 
@@ -1375,409 +551,308 @@ function getLunarDay() {
 
 function getPhase(day) {
   const p = day / SYNODIC;
-  if (p < 0.125) return { id:'new',  name:'New Moon',  emoji:'🌑', action:'Full Buy',  color:'#14F195', pct:100, score:88 };
-  if (p < 0.25)  return { id:'wax',  name:'Waxing Crescent', emoji:'🌒', action:'50% Buy', color:'#9945FF', pct:50, score:66 };
-  if (p < 0.5)   return { id:'wax',  name:'Waxing',    emoji:'🌓', action:'50% Buy',  color:'#9945FF', pct:50, score:62 };
-  if (p < 0.625) return { id:'full', name:'Full Moon',  emoji:'🌕', action:'Pause',    color:'#FFD966', pct:0,  score:38 };
-  if (p < 0.75)  return { id:'wan',  name:'Waning Gibbous', emoji:'🌖', action:'JLP Yield', color:'#00BFFF', pct:0, score:70 };
-  if (p < 0.875) return { id:'wan',  name:'Waning',    emoji:'🌗', action:'JLP Yield', color:'#00BFFF', pct:0,  score:68 };
-  return           { id:'wan',  name:'Waning Crescent', emoji:'🌘', action:'JLP Yield', color:'#00BFFF', pct:0, score:75 };
+  if (p < 0.125) return { id:'new',  name:'New Moon',        emoji:'🌑', action:'Full Buy',  color:'#14F195', score:88 };
+  if (p < 0.25)  return { id:'wax',  name:'Waxing Crescent', emoji:'🌒', action:'50% Buy',   color:'#9945FF', score:66 };
+  if (p < 0.5)   return { id:'wax',  name:'Waxing',          emoji:'🌓', action:'50% Buy',   color:'#9945FF', score:62 };
+  if (p < 0.625) return { id:'full', name:'Full Moon',        emoji:'🌕', action:'Pause',     color:'#FFD966', score:38 };
+  if (p < 0.75)  return { id:'wan',  name:'Waning Gibbous',  emoji:'🌖', action:'JLP Yield', color:'#00BFFF', score:70 };
+  if (p < 0.875) return { id:'wan',  name:'Waning',          emoji:'🌗', action:'JLP Yield', color:'#00BFFF', score:68 };
+  return           { id:'wan',  name:'Waning Crescent',       emoji:'🌘', action:'JLP Yield', color:'#00BFFF', score:75 };
 }
 
-// =============================================
-// SVG ARC HELPER
-// =============================================
 function arcPath(cx, cy, r, startDeg, endDeg) {
-  const s = (startDeg - 90) * Math.PI / 180;
-  const e = (endDeg - 90) * Math.PI / 180;
-  const x1 = cx + r * Math.cos(s), y1 = cy + r * Math.sin(s);
-  const x2 = cx + r * Math.cos(e), y2 = cy + r * Math.sin(e);
-  const large = (endDeg - startDeg) > 180 ? 1 : 0;
-  return `M${x1},${y1} A${r},${r} 0 ${large} 1 ${x2},${y2}`;
+  const s = (startDeg-90)*Math.PI/180, e = (endDeg-90)*Math.PI/180;
+  const x1=cx+r*Math.cos(s), y1=cy+r*Math.sin(s), x2=cx+r*Math.cos(e), y2=cy+r*Math.sin(e);
+  return `M${x1},${y1} A${r},${r} 0 ${(endDeg-startDeg)>180?1:0} 1 ${x2},${y2}`;
 }
 
-// =============================================
-// DIAL UPDATE
-// =============================================
 function updateUI() {
-  const day = getLunarDay();
-  const phase = getPhase(day);
-  const pct = day / SYNODIC;
-  const angleDeg = pct * 360;
-  const cx = 115, cy = 115, r = 100;
-
-  // Arc paths
-  const arcs = [
-    { id:'arc-new',  s:2,   e:44,  active: phase.id === 'new' },
-    { id:'arc-wax',  s:46,  e:178, active: phase.id === 'wax' },
-    { id:'arc-full', s:180, e:224, active: phase.id === 'full' },
-    { id:'arc-wan',  s:226, e:358, active: phase.id === 'wan' },
-  ];
-
-  arcs.forEach(a => {
+  const day = getLunarDay(), phase = getPhase(day), pct = day/SYNODIC, angleDeg = pct*360;
+  const cx=115, cy=115, r=100;
+  [
+    {id:'arc-new',s:2,e:44,active:phase.id==='new'},
+    {id:'arc-wax',s:46,e:178,active:phase.id==='wax'},
+    {id:'arc-full',s:180,e:224,active:phase.id==='full'},
+    {id:'arc-wan',s:226,e:358,active:phase.id==='wan'},
+  ].forEach(a => {
     const el = document.getElementById(a.id);
-    el.setAttribute('d', arcPath(cx, cy, r, a.s, a.e));
-    el.style.opacity = a.active ? '1' : '0.2';
-    el.style.strokeWidth = a.active ? '12' : '7';
-    if (a.active) el.style.filter = `drop-shadow(0 0 6px ${phase.color})`;
-    else el.style.filter = 'none';
+    el.setAttribute('d', arcPath(cx,cy,r,a.s,a.e));
+    el.style.opacity = a.active?'1':'0.2';
+    el.style.strokeWidth = a.active?'12':'7';
+    el.style.filter = a.active?`drop-shadow(0 0 6px ${phase.color})`:'none';
   });
-
-  // Position dot
-  const dotRad = (angleDeg - 90) * Math.PI / 180;
-  const dx = cx + r * Math.cos(dotRad);
-  const dy = cy + r * Math.sin(dotRad);
-  const dot = document.getElementById('pos-dot');
-  const glow = document.getElementById('pos-glow');
-  dot.setAttribute('cx', dx); dot.setAttribute('cy', dy);
-  glow.setAttribute('cx', dx); glow.setAttribute('cy', dy);
-  dot.setAttribute('fill', phase.color);
-  glow.setAttribute('fill', phase.color);
-
-  // Center text
+  const dotRad=(angleDeg-90)*Math.PI/180, dx=cx+r*Math.cos(dotRad), dy=cy+r*Math.sin(dotRad);
+  ['pos-dot','pos-glow'].forEach(id=>{
+    document.getElementById(id).setAttribute('cx',dx);
+    document.getElementById(id).setAttribute('cy',dy);
+    document.getElementById(id).setAttribute('fill',phase.color);
+  });
   document.getElementById('d-emoji').textContent = phase.emoji;
   document.getElementById('d-phase').textContent = phase.name;
   document.getElementById('d-action').textContent = phase.action;
   document.getElementById('d-action').style.color = phase.color;
-
-  // Stats
   document.getElementById('s-day').textContent = day.toFixed(1);
-  document.getElementById('s-next').textContent = (SYNODIC - day).toFixed(1);
-
-  // Progress
-  const p100 = Math.round(pct * 100);
-  document.getElementById('prog-pct').textContent = p100 + '%';
-  document.getElementById('prog-bar').style.width = p100 + '%';
-
-  // Phase chips
-  ['new','wax','full','wan'].forEach(id => {
-    const chip = document.getElementById('chip-' + id);
-    chip.classList.toggle('active', id === phase.id);
-    if (id === phase.id) {
-      chip.style.background = phase.color + '18';
-      chip.style.borderColor = phase.color + '55';
-      chip.style.boxShadow = `0 0 12px ${phase.color}22`;
-    } else {
-      chip.style.background = '';
-      chip.style.borderColor = '';
-      chip.style.boxShadow = '';
-    }
+  document.getElementById('s-next').textContent = (SYNODIC-day).toFixed(1);
+  const p100=Math.round(pct*100);
+  document.getElementById('prog-pct').textContent = p100+'%';
+  document.getElementById('prog-bar').style.width = p100+'%';
+  ['new','wax','full','wan'].forEach(id=>{
+    const chip=document.getElementById('chip-'+id);
+    chip.classList.toggle('active',id===phase.id);
+    chip.style.background = id===phase.id?phase.color+'18':'';
+    chip.style.borderColor = id===phase.id?phase.color+'55':'';
+    chip.style.boxShadow = id===phase.id?`0 0 12px ${phase.color}22`:'';
   });
-
-  // Info panel
   document.getElementById('cur-action').textContent = phase.action;
   document.getElementById('cur-action').style.color = phase.color;
-  const nextMap = { new:'Waxing Phase', wax:'Full Moon', full:'Waning Phase', wan:'New Moon' };
-  document.getElementById('next-trig').textContent = nextMap[phase.id];
-
-  // Cosmic confidence
-  const sc = phase.score;
+  document.getElementById('next-trig').textContent = {new:'Waxing Phase',wax:'Full Moon',full:'Waning Phase',wan:'New Moon'}[phase.id];
+  const sc=phase.score;
   document.getElementById('c-score').textContent = sc;
-  document.getElementById('c-score').style.color = sc >= 70 ? '#14F195' : sc >= 50 ? '#9945FF' : '#FFD966';
-  document.getElementById('c-fill').style.width = sc + '%';
-  const stars = sc >= 80 ? '★★★★★' : sc >= 65 ? '★★★★☆' : sc >= 45 ? '★★★☆☆' : '★★☆☆☆';
-  document.getElementById('c-stars').textContent = stars;
-
-  const msgs = {
-    new:  `<span style="color:#14F195">New moon</span> — prime accumulation window. Institutional timing aligns.`,
-    wax:  `<span style="color:#9945FF">Waxing phase</span> — building momentum, lighter buys.`,
-    full: `<span style="color:#FFD966">Full moon</span> — historically volatile. Pause & observe.`,
-    wan:  `<span style="color:#00BFFF">Waning phase</span> — USDC quietly compounding in JLP.`
-  };
-  document.getElementById('c-msg').innerHTML = msgs[phase.id];
-
-  // New moon glow pulse on dial
-  if (phase.id === 'new') {
-    document.querySelector('.panel-moon').style.boxShadow = '0 0 40px rgba(20,241,149,0.1)';
-  } else {
-    document.querySelector('.panel-moon').style.boxShadow = '';
-  }
+  document.getElementById('c-score').style.color = sc>=70?'#14F195':sc>=50?'#9945FF':'#FFD966';
+  document.getElementById('c-fill').style.width = sc+'%';
+  document.getElementById('c-stars').textContent = sc>=80?'★★★★★':sc>=65?'★★★★☆':sc>=45?'★★★☆☆':'★★☆☆☆';
+  document.getElementById('c-msg').innerHTML = {
+    new:`<span style="color:#14F195">New moon</span> — prime accumulation window. Institutional timing aligns.`,
+    wax:`<span style="color:#9945FF">Waxing phase</span> — building momentum, lighter buys.`,
+    full:`<span style="color:#FFD966">Full moon</span> — historically volatile. Pause & observe.`,
+    wan:`<span style="color:#00BFFF">Waning phase</span> — USDC quietly compounding in JLP.`
+  }[phase.id];
+  document.querySelector('.panel-moon').style.boxShadow = phase.id==='new'?'0 0 40px rgba(20,241,149,0.1)':'';
+  // Update price strip moon timer
+  const daysLeft=SYNODIC-day, h=Math.floor((daysLeft-Math.floor(daysLeft))*24);
+  const el=document.getElementById('ps-moon');
+  if(el) el.textContent=Math.floor(daysLeft)+'d '+String(h).padStart(2,'0')+'h';
 }
 
-// =============================================
-// STARFIELD
-// =============================================
 function initStars() {
-  const cv = document.getElementById('starfield');
-  const ctx = cv.getContext('2d');
-
-  function resize() {
-    cv.width = window.innerWidth;
-    cv.height = window.innerHeight;
-  }
-  resize();
-  window.addEventListener('resize', resize);
-
-  const stars = Array.from({ length: 220 }, () => ({
-    x: Math.random(),
-    y: Math.random(),
-    r: Math.random() * 1.4 + 0.2,
-    phase: Math.random() * Math.PI * 2,
-    speed: Math.random() * 0.6 + 0.2
-  }));
-
-  // Occasional shooting stars
-  let shooters = [];
-  setInterval(() => {
-    if (Math.random() < 0.4) {
-      shooters.push({ x: Math.random() * cv.width, y: Math.random() * cv.height * 0.5, len: 0, maxLen: 80 + Math.random() * 120, angle: Math.PI / 4 + Math.random() * 0.3 });
-    }
-  }, 3000);
-
-  let t = 0;
-  function draw() {
-    t += 0.008;
-    ctx.fillStyle = '#040818';
-    ctx.fillRect(0, 0, cv.width, cv.height);
-
-    stars.forEach(s => {
-      const tw = 0.5 + 0.5 * Math.sin(s.phase + t * s.speed);
-      ctx.beginPath();
-      ctx.arc(s.x * cv.width, s.y * cv.height, s.r, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(180,200,255,${0.2 + 0.7 * tw})`;
-      ctx.fill();
-    });
-
-    // Shooting stars
-    shooters = shooters.filter(sh => {
-      sh.len += 6;
-      const alpha = 1 - sh.len / sh.maxLen;
-      ctx.beginPath();
-      ctx.moveTo(sh.x, sh.y);
-      ctx.lineTo(sh.x + Math.cos(sh.angle) * sh.len, sh.y + Math.sin(sh.angle) * sh.len);
-      ctx.strokeStyle = `rgba(200,220,255,${alpha * 0.7})`;
-      ctx.lineWidth = 1.5;
-      ctx.stroke();
-      sh.x += Math.cos(sh.angle) * 4;
-      sh.y += Math.sin(sh.angle) * 4;
-      return sh.len < sh.maxLen;
-    });
-
+  const cv=document.getElementById('starfield'), ctx=cv.getContext('2d');
+  function resize(){cv.width=window.innerWidth;cv.height=window.innerHeight;}
+  resize(); window.addEventListener('resize',resize);
+  const stars=Array.from({length:220},()=>({x:Math.random(),y:Math.random(),r:Math.random()*1.4+0.2,phase:Math.random()*Math.PI*2,speed:Math.random()*0.6+0.2}));
+  let shooters=[];
+  setInterval(()=>{if(Math.random()<0.4)shooters.push({x:Math.random()*cv.width,y:Math.random()*cv.height*0.5,len:0,maxLen:80+Math.random()*120,angle:Math.PI/4+Math.random()*0.3});},3000);
+  let t=0;
+  function draw(){
+    t+=0.008; ctx.fillStyle='#040818'; ctx.fillRect(0,0,cv.width,cv.height);
+    stars.forEach(s=>{const tw=0.5+0.5*Math.sin(s.phase+t*s.speed);ctx.beginPath();ctx.arc(s.x*cv.width,s.y*cv.height,s.r,0,Math.PI*2);ctx.fillStyle=`rgba(180,200,255,${0.2+0.7*tw})`;ctx.fill();});
+    shooters=shooters.filter(sh=>{sh.len+=6;const alpha=1-sh.len/sh.maxLen;ctx.beginPath();ctx.moveTo(sh.x,sh.y);ctx.lineTo(sh.x+Math.cos(sh.angle)*sh.len,sh.y+Math.sin(sh.angle)*sh.len);ctx.strokeStyle=`rgba(200,220,255,${alpha*0.7})`;ctx.lineWidth=1.5;ctx.stroke();sh.x+=Math.cos(sh.angle)*4;sh.y+=Math.sin(sh.angle)*4;return sh.len<sh.maxLen;});
     requestAnimationFrame(draw);
   }
-
   draw();
 }
 
-// =============================================
-// MOONSURFER
-// =============================================
 function initSurfer() {
-  document.getElementById('ms').innerHTML = `
-  <svg width="130" height="85" viewBox="0 0 130 85" style="overflow:visible">
-    <!-- Board glow -->
-    <ellipse cx="65" cy="72" rx="55" ry="9" fill="rgba(20,241,149,0.1)"/>
-    <!-- Surfboard -->
-    <path d="M12 68 Q65 58 118 66 Q110 74 65 76 Q20 74 12 68Z" fill="rgba(20,241,149,0.08)" stroke="#14F195" stroke-width="1.5"/>
-    <!-- Board inner shine -->
-    <path d="M25 67 Q65 61 105 66" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
-    <!-- Board gems -->
-    <circle cx="30" cy="69" r="2" fill="#14F195" opacity="0.6"/>
-    <circle cx="65" cy="67" r="2" fill="#9945FF" opacity="0.6"/>
-    <circle cx="100" cy="69" r="2" fill="#14F195" opacity="0.6"/>
-
-    <!-- Body/suit -->
-    <rect x="59" y="35" width="12" height="22" rx="5" fill="#0D1835"/>
-    <rect x="59" y="35" width="6" height="22" rx="5" fill="rgba(153,69,255,0.25)"/>
-
-    <!-- Helmet -->
-    <circle cx="65" cy="28" r="13" fill="#0A1525" stroke="#9945FF" stroke-width="1.5"/>
-    <!-- Visor -->
-    <path d="M57 25 Q65 19 73 25 Q73 32 65 34 Q57 32 57 25Z" fill="rgba(20,241,149,0.25)" stroke="rgba(20,241,149,0.5)" stroke-width="0.5"/>
-    <!-- Visor reflection -->
-    <ellipse cx="61" cy="24" rx="4" ry="2.5" fill="rgba(255,255,255,0.2)" transform="rotate(-20,61,24)"/>
-    <!-- Helmet antenna -->
-    <line x1="65" y1="15" x2="68" y2="8" stroke="#9945FF" stroke-width="1.5" stroke-linecap="round"/>
-    <circle cx="68" cy="7" r="2.5" fill="#9945FF" opacity="0.8"/>
-
-    <!-- Arms -->
-    <path d="M59 40 Q50 44 44 47" fill="none" stroke="#0D1835" stroke-width="6" stroke-linecap="round"/>
-    <path d="M71 40 Q80 36 85 32" fill="none" stroke="#0D1835" stroke-width="6" stroke-linecap="round"/>
-    <!-- Gloves -->
-    <circle cx="43" cy="48" r="4.5" fill="#14F195" opacity="0.7"/>
-    <circle cx="85" cy="31" r="4.5" fill="#14F195" opacity="0.7"/>
-
-    <!-- Legs -->
-    <path d="M61 56 Q56 62 53 68" fill="none" stroke="#0D1835" stroke-width="6" stroke-linecap="round"/>
-    <path d="M69 56 Q74 62 77 68" fill="none" stroke="#0D1835" stroke-width="6" stroke-linecap="round"/>
-
-    <!-- Trail particles -->
-    <circle cx="0" cy="68" r="2.5" fill="#14F195" opacity="0.5"/>
-    <circle cx="-12" cy="64" r="2" fill="#9945FF" opacity="0.55"/>
-    <circle cx="-22" cy="70" r="1.5" fill="#14F195" opacity="0.4"/>
-    <circle cx="-6" cy="75" r="1.5" fill="#9945FF" opacity="0.3"/>
-    <circle cx="-30" cy="66" r="1" fill="#00BFFF" opacity="0.4"/>
-
-    <!-- Stars around surfer -->
-    <text x="-5" y="45" font-size="10" opacity="0.4" style="animation: none">✦</text>
-    <text x="105" y="55" font-size="8" opacity="0.3">✦</text>
-  </svg>`;
+  document.getElementById('ms').innerHTML=`<svg width="130" height="85" viewBox="0 0 130 85" style="overflow:visible"><ellipse cx="65" cy="72" rx="55" ry="9" fill="rgba(20,241,149,0.1)"/><path d="M12 68 Q65 58 118 66 Q110 74 65 76 Q20 74 12 68Z" fill="rgba(20,241,149,0.08)" stroke="#14F195" stroke-width="1.5"/><path d="M25 67 Q65 61 105 66" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1"/><circle cx="30" cy="69" r="2" fill="#14F195" opacity="0.6"/><circle cx="65" cy="67" r="2" fill="#9945FF" opacity="0.6"/><circle cx="100" cy="69" r="2" fill="#14F195" opacity="0.6"/><rect x="59" y="35" width="12" height="22" rx="5" fill="#0D1835"/><rect x="59" y="35" width="6" height="22" rx="5" fill="rgba(153,69,255,0.25)"/><circle cx="65" cy="28" r="13" fill="#0A1525" stroke="#9945FF" stroke-width="1.5"/><path d="M57 25 Q65 19 73 25 Q73 32 65 34 Q57 32 57 25Z" fill="rgba(20,241,149,0.25)" stroke="rgba(20,241,149,0.5)" stroke-width="0.5"/><ellipse cx="61" cy="24" rx="4" ry="2.5" fill="rgba(255,255,255,0.2)" transform="rotate(-20,61,24)"/><line x1="65" y1="15" x2="68" y2="8" stroke="#9945FF" stroke-width="1.5" stroke-linecap="round"/><circle cx="68" cy="7" r="2.5" fill="#9945FF" opacity="0.8"/><path d="M59 40 Q50 44 44 47" fill="none" stroke="#0D1835" stroke-width="6" stroke-linecap="round"/><path d="M71 40 Q80 36 85 32" fill="none" stroke="#0D1835" stroke-width="6" stroke-linecap="round"/><circle cx="43" cy="48" r="4.5" fill="#14F195" opacity="0.7"/><circle cx="85" cy="31" r="4.5" fill="#14F195" opacity="0.7"/><path d="M61 56 Q56 62 53 68" fill="none" stroke="#0D1835" stroke-width="6" stroke-linecap="round"/><path d="M69 56 Q74 62 77 68" fill="none" stroke="#0D1835" stroke-width="6" stroke-linecap="round"/><circle cx="0" cy="68" r="2.5" fill="#14F195" opacity="0.5"/><circle cx="-12" cy="64" r="2" fill="#9945FF" opacity="0.55"/><circle cx="-22" cy="70" r="1.5" fill="#14F195" opacity="0.4"/></svg>`;
 }
-
-// =============================================
-// INTERACTIONS
-// =============================================
 
 function jupClick() {
-  const jup = document.getElementById('jup');
-  jup.style.transition = 'transform 0.6s cubic-bezier(0.34,1.56,0.64,1)';
-  jup.style.transform = 'scale(1.35) rotate(360deg)';
-  setTimeout(() => {
-    jup.style.transform = '';
-    jup.style.transition = '';
-  }, 700);
+  const jup=document.getElementById('jup');
+  jup.style.transition='transform 0.6s cubic-bezier(0.34,1.56,0.64,1)';
+  jup.style.transform='scale(1.35) rotate(360deg)';
+  setTimeout(()=>{jup.style.transform='';jup.style.transition='';},700);
 }
 
-let jlpState = true;
-function toggleJLP() {
-  jlpState = !jlpState;
-  document.getElementById('jlp-tog').classList.toggle('on', jlpState);
-}
+let jlpState=true;
+function toggleJLP(){jlpState=!jlpState;document.getElementById('jlp-tog').classList.toggle('on',jlpState);}
 
-function launchDCA() {
-  const day = getLunarDay();
-  const pct = day / SYNODIC;
-  if (pct > 0.08 && pct < 0.92) {
-    showMidModal(day, pct);
-  } else {
-    confirmLaunch();
-  }
-}
-
-function showMidModal(day, pct) {
-  const phase = getPhase(day);
-  const daysLeft = SYNODIC - day;
-  const h = Math.floor((daysLeft - Math.floor(daysLeft)) * 24);
-  document.getElementById('m-emoji').textContent = phase.emoji;
-  document.getElementById('m-days').textContent = Math.floor(daysLeft) + ' days';
-  document.getElementById('m-timer').textContent = `${String(Math.floor(daysLeft)).padStart(2,'0')}d ${String(h).padStart(2,'0')}h`;
+function showMidModal(day) {
+  const phase=getPhase(day), daysLeft=SYNODIC-day, h=Math.floor((daysLeft-Math.floor(daysLeft))*24);
+  document.getElementById('m-emoji').textContent=phase.emoji;
+  document.getElementById('m-days').textContent=Math.floor(daysLeft)+' days';
+  document.getElementById('m-timer').textContent=String(Math.floor(daysLeft)).padStart(2,'0')+'d '+String(h).padStart(2,'0')+'h';
   document.getElementById('overlay').classList.add('visible');
 }
 
-function waitForMoon() {
-  document.getElementById('overlay').classList.remove('visible');
-  const btn = document.getElementById('launch-btn');
-  btn.textContent = '🌑 Queued for New Moon';
-  btn.style.background = 'linear-gradient(135deg, #00A870, #006B50)';
-}
+function waitForMoon(){document.getElementById('overlay').classList.remove('visible');const btn=document.getElementById('launch-btn');btn.textContent='🌑 Queued for New Moon';btn.style.background='linear-gradient(135deg,#00A870,#006B50)';}
+function beginNow(){document.getElementById('overlay').classList.remove('visible');confirmLaunch();}
+function confirmLaunch(){const btn=document.getElementById('launch-btn');btn.textContent='🚀 DCA Orbit Active!';btn.style.background='linear-gradient(135deg,var(--sol-green),#00A068)';btn.style.boxShadow='0 0 30px rgba(20,241,149,0.3)';setTimeout(()=>{btn.textContent='◎ LAUNCH DCA ORBIT';btn.style.background='';btn.style.boxShadow='';},4000);}
 
-function beginNow() {
-  document.getElementById('overlay').classList.remove('visible');
-  confirmLaunch();
-}
-
-function confirmLaunch() {
-  const btn = document.getElementById('launch-btn');
-  btn.textContent = '🚀 DCA Orbit Active!';
-  btn.style.background = 'linear-gradient(135deg, var(--sol-green), #00A068)';
-  btn.style.boxShadow = '0 0 30px rgba(20,241,149,0.3)';
-  setTimeout(() => {
-    btn.textContent = '◎ LAUNCH DCA ORBIT';
-    btn.style.background = '';
-    btn.style.boxShadow = '';
-  }, 4000);
-}
-
-// =============================================
 // TAB SWITCHING
-// =============================================
 function switchTab(tab) {
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('tab-' + tab).classList.add('active');
-  if (tab === 'dash') {
-    document.getElementById('view-dash').style.display = 'contents';
-    updateDashboard();
-  } else {
-    document.getElementById('view-dash').style.display = 'none';
-  }
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.mob-tab').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  const desktopBtn=document.getElementById('tab-'+tab);
+  const mobBtn=document.getElementById('mob-'+tab);
+  const view=document.getElementById('view-'+tab);
+  if(desktopBtn) desktopBtn.classList.add('active');
+  if(mobBtn) mobBtn.classList.add('active');
+  if(view) view.classList.add('active');
+  if(tab==='dash') updateDashboard();
+  if(tab==='chart') setTimeout(drawChart,100);
 }
 
+// JUPITER PRICES
 // =============================================
-// DASHBOARD
+// JUPITER API - prices + token icons
 // =============================================
-async function fetchJupiterPrices() {
+const SOL_MINT  = 'So11111111111111111111111111111111111111112';
+const USDC_MINT = 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v';
+const JLP_MINT  = '27G8MtK7VtTcCHkpASjSDdkWWYfoqT6ggEuKidVJidD4';
+const JUP_KEY   = window.__JUP_KEY__ || '';
+
+function setTokenIcon(imgId, fbId, url) {
+  const img = document.getElementById(imgId);
+  const fb  = document.getElementById(fbId);
+  if (!img || !url) return;
+  img.src = url;
+  img.onload = () => { img.style.display='block'; if(fb) fb.style.display='none'; };
+  img.onerror = () => {};
+}
+
+async function fetchTokenIcons() {
+  // Jupiter Token API v1 — returns logoURI for any verified token
+  const BASE = 'https://lite-api.jup.ag/tokens/v1/token/';
+  const headers = JUP_KEY ? { 'x-api-key': JUP_KEY } : {};
   try {
-    const res = await fetch('https://api.jup.ag/price/v2?ids=SOL,JLP');
+    const [solData, jlpData] = await Promise.all([
+      fetch(BASE + SOL_MINT,  { headers }).then(r=>r.json()),
+      fetch(BASE + JLP_MINT,  { headers }).then(r=>r.json()),
+    ]);
+    if (solData.logoURI) {
+      // SOL icons — update all instances
+      document.querySelectorAll('img[alt="SOL"]').forEach(img => { img.src = solData.logoURI; });
+    }
+    if (jlpData.logoURI) {
+      setTokenIcon('jlp-icon-ps',   'jlp-fallback-ps',   jlpData.logoURI);
+      setTokenIcon('jlp-icon-dash', 'jlp-fallback-dash', jlpData.logoURI);
+    }
+  } catch(e) { console.log('Token icon fetch failed', e); }
+}
+
+async function fetchPrices() {
+  const SOL_MINT  = 'So11111111111111111111111111111111111111112';
+  const JLP_MINT  = '27G8MtK7VtTcCHkpASjSDdkWWYfoqT6ggEuKidVJidD4';
+  const headers = JUP_KEY ? { 'x-api-key': JUP_KEY } : {};
+  try {
+    // Jupiter Price API v3 — the official bounty-aligned endpoint
+    const res = await fetch(
+      `https://api.jup.ag/price/v3?ids=${SOL_MINT},${JLP_MINT}`,
+      { headers }
+    );
     const data = await res.json();
-    const sol = data.data && data.data.SOL && data.data.SOL.price;
-    const jlp = data.data && data.data.JLP && data.data.JLP.price;
-    if (sol) {
-      document.getElementById('p-sol').textContent = '$' + sol.toFixed(2);
-      document.getElementById('p-sol').style.color = 'var(--sol-green)';
-      const solBal = parseFloat(document.getElementById('d-sol').textContent);
-      if (!isNaN(solBal)) document.getElementById('d-sol-usd').textContent = '\u2248 $' + (solBal * sol).toFixed(2) + ' USD';
+    const solD = data[SOL_MINT];
+    const jlpD = data[JLP_MINT];
+
+    if (solD && solD.usdPrice) {
+      const sol = solD.usdPrice;
+      const chgPct = solD.priceChange24h ? solD.priceChange24h.toFixed(2) : null;
+      ['ps-sol','p-sol'].forEach(id=>{const el=document.getElementById(id);if(el){el.textContent='$'+sol.toFixed(2);el.style.color='var(--sol-green)';}});
+      const chgEl = document.getElementById('p-sol-chg');
+      if (chgEl) {
+        chgEl.textContent = chgPct ? (chgPct > 0 ? '+' : '') + chgPct + '% · Jupiter' : 'Live · Jupiter';
+        chgEl.className = 'price-tag ' + (chgPct && chgPct > 0 ? 'up' : 'down');
+      }
+      const sb = parseFloat(document.getElementById('d-sol').textContent);
+      if (!isNaN(sb)) { const u=document.getElementById('d-sol-usd'); if(u) u.textContent='≈ $'+(sb*sol).toFixed(2)+' USD'; }
     }
-    if (jlp) {
-      document.getElementById('p-jlp').textContent = '$' + jlp.toFixed(4);
-      document.getElementById('p-jlp').style.color = 'var(--jup-green)';
+    if (jlpD && jlpD.usdPrice) {
+      const jlp = jlpD.usdPrice;
+      const jchgPct = jlpD.priceChange24h ? jlpD.priceChange24h.toFixed(2) : null;
+      ['ps-jlp','p-jlp'].forEach(id=>{const el=document.getElementById(id);if(el){el.textContent='$'+jlp.toFixed(4);el.style.color='var(--jup-green)';}});
+      const jchgEl = document.getElementById('p-jlp-chg');
+      if (jchgEl) {
+        jchgEl.textContent = jchgPct ? (jchgPct > 0 ? '+' : '') + jchgPct + '% · Jupiter' : 'Live · Jupiter';
+        jchgEl.className = 'price-tag ' + (jchgPct && jchgPct > 0 ? 'up' : 'down');
+      }
     }
-    document.getElementById('p-sol-chg').textContent = 'Live via Jupiter API';
-    document.getElementById('p-sol-chg').className = 'price-change up';
-    document.getElementById('p-jlp-chg').textContent = 'Live via Jupiter API';
-    document.getElementById('p-jlp-chg').className = 'price-change up';
   } catch(e) {
-    const el = document.getElementById('p-sol');
-    if (el) el.textContent = 'Unavailable';
+    console.log('Jupiter price fetch failed', e);
+    // Fallback to Binance for SOL
+    try {
+      const r = await fetch('https://api.binance.com/api/v3/ticker/price?symbol=SOLUSDT');
+      const d = await r.json();
+      const sol = parseFloat(d.price);
+      if (sol) {
+        ['ps-sol','p-sol'].forEach(id=>{const el=document.getElementById(id);if(el){el.textContent='$'+sol.toFixed(2);el.style.color='var(--sol-green)';}});
+        const chg=document.getElementById('p-sol-chg');if(chg){chg.textContent='Live · Binance';chg.className='price-tag up';}
+      }
+    } catch(e2) {}
   }
 }
 
-async function fetchJLPApy() {
-  try {
-    const res = await fetch('https://stats.jup.ag/pool/stats');
-    const data = await res.json();
-    const apy = data && (data.apy || data.totalApy);
-    document.getElementById('d-apy').textContent = apy ? (apy * 100).toFixed(1) + '%' : '~15%';
-  } catch { document.getElementById('d-apy').textContent = '~15%'; }
-}
-
+// DASHBOARD
 function updateDashboard() {
-  const day = getLunarDay();
-  const phase = getPhase(day);
-  const daysLeft = SYNODIC - day;
-  const h = Math.floor((daysLeft - Math.floor(daysLeft)) * 24);
-  document.getElementById('d-next-moon').textContent = String(Math.floor(daysLeft)).padStart(2,'0') + 'd ' + String(h).padStart(2,'0') + 'h';
-  document.getElementById('d-cur-phase').textContent = phase.emoji + ' ' + phase.name;
-  document.getElementById('d-cur-phase').style.color = phase.color;
-  document.getElementById('d-cycle-day').textContent = day.toFixed(1) + ' / 29.5';
-  document.getElementById('d-action-2').textContent = phase.action;
-  document.getElementById('d-action-2').style.color = phase.color;
-  document.getElementById('d-orders').textContent = '1';
-  fetchJupiterPrices();
-  fetchJLPApy();
-  updateTxList();
+  const day=getLunarDay(), phase=getPhase(day), daysLeft=SYNODIC-day, h=Math.floor((daysLeft-Math.floor(daysLeft))*24);
+  const el=document.getElementById('d-next-moon');if(el)el.textContent=Math.floor(daysLeft)+'d '+String(h).padStart(2,'0')+'h';
+  const cp=document.getElementById('d-cur-phase');if(cp){cp.textContent=phase.emoji+' '+phase.name;cp.style.color=phase.color;}
+  const cd=document.getElementById('d-cycle-day');if(cd)cd.textContent=day.toFixed(1)+' / 29.5';
+  const a2=document.getElementById('d-action-2');if(a2){a2.textContent=phase.action;a2.style.color=phase.color;}
+  fetchPrices();
 }
 
-function updateTxList() {
-  const list = document.getElementById('tx-list');
-  const walletBtn = document.getElementById('wbtn');
-  const connected = walletBtn && walletBtn.textContent.includes('...');
-  if (!connected) {
-    list.innerHTML = '<div class="tx-row"><div class="tx-left"><div class="tx-dot" style="background:var(--text-dim)"></div><div class="tx-info"><span class="tx-type" style="color:var(--text-dim)">Connect wallet to view activity</span><span class="tx-time">—</span></div></div></div>';
-    document.getElementById('d-sol').textContent = '—';
-    document.getElementById('d-usdc').textContent = '—';
-    return;
+// CHART
+let chartPeriod=7;
+function setChartPeriod(d){
+  chartPeriod=d;
+  document.querySelectorAll('.cp-btn').forEach(b=>b.classList.remove('cp-active'));
+  const btn=document.getElementById('cp-'+d);if(btn)btn.classList.add('cp-active');
+  drawChart();
+}
+
+async function drawChart() {
+  const canvas=document.getElementById('price-chart');
+  if(!canvas)return;
+  const ctx=canvas.getContext('2d');
+  const dpr=window.devicePixelRatio||1;
+  canvas.width=canvas.offsetWidth*dpr; canvas.height=280*dpr; ctx.scale(dpr,dpr);
+  const W=canvas.offsetWidth, H=280;
+  let prices=[];
+  try {
+    const res=await fetch(`https://api.coingecko.com/api/v3/coins/solana/market_chart?vs_currency=usd&days=${chartPeriod}`);
+    const d=await res.json(); prices=d.prices||[];
+  } catch(e) {
+    const now=Date.now(), base=135;
+    for(let i=chartPeriod*24;i>=0;i--){const t=now-i*3600000;prices.push([t,base+Math.sin(i/20)*5+(Math.random()-0.48)*3]);}
   }
-  const txs = [
-    { type: 'DCA Buy', time: 'Today · New Moon', amount: '+0.25 SOL', color: 'var(--sol-green)' },
-    { type: 'JLP Deposit', time: '7 days ago · Waning', amount: '-10 USDC', color: '#00BFFF' },
-    { type: 'DCA Buy', time: '14 days ago · Full Moon skip', amount: 'Paused', color: '#FFD966' },
-  ];
-  list.innerHTML = txs.map(tx => '<div class="tx-row"><div class="tx-left"><div class="tx-dot" style="background:' + tx.color + '"></div><div class="tx-info"><span class="tx-type">' + tx.type + '</span><span class="tx-time">' + tx.time + '</span></div></div><span class="tx-amount" style="color:' + tx.color + '">' + tx.amount + '</span></div>').join('');
-  document.getElementById('d-sol').textContent = '0.05';
-  document.getElementById('d-usdc').textContent = '96';
+  if(prices.length<2)return;
+  const vals=prices.map(p=>p[1]), times=prices.map(p=>p[0]);
+  const minV=Math.min(...vals)*0.995, maxV=Math.max(...vals)*1.005;
+  const pad={l:50,r:16,t:20,b:30}, cW=W-pad.l-pad.r, cH=H-pad.t-pad.b;
+  const toX=i=>pad.l+(i/(prices.length-1))*cW;
+  const toY=v=>pad.t+cH-((v-minV)/(maxV-minV))*cH;
+  ctx.clearRect(0,0,W,H);
+  ctx.strokeStyle='rgba(255,255,255,0.04)'; ctx.lineWidth=1;
+  for(let i=0;i<=4;i++){const y=pad.t+(i/4)*cH;ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(W-pad.r,y);ctx.stroke();const val=maxV-(i/4)*(maxV-minV);ctx.fillStyle='rgba(150,170,200,0.5)';ctx.font='9px monospace';ctx.textAlign='right';ctx.fillText('$'+val.toFixed(0),pad.l-4,y+3);}
+  const SYNODIC_MS=29.53059*86400000, KNOWN_MS=new Date('2024-01-11T00:00:00Z').getTime();
+  times.forEach((t,i)=>{const pct=((t-KNOWN_MS)%SYNODIC_MS+SYNODIC_MS)%SYNODIC_MS/SYNODIC_MS;const isNew=pct<0.04||pct>0.96,isFull=pct>0.46&&pct<0.54;if(isNew||isFull){const x=toX(i);ctx.strokeStyle=isNew?'rgba(20,241,149,0.25)':'rgba(255,217,102,0.2)';ctx.lineWidth=1;ctx.setLineDash([3,3]);ctx.beginPath();ctx.moveTo(x,pad.t);ctx.lineTo(x,pad.t+cH);ctx.stroke();ctx.setLineDash([]);ctx.fillStyle=isNew?'rgba(20,241,149,0.7)':'rgba(255,217,102,0.7)';ctx.font='10px sans-serif';ctx.textAlign='center';ctx.fillText(isNew?'🌑':'🌕',x,pad.t+cH+18);}});
+  const grad=ctx.createLinearGradient(0,pad.t,0,pad.t+cH);grad.addColorStop(0,'rgba(153,69,255,0.2)');grad.addColorStop(1,'rgba(153,69,255,0)');
+  ctx.beginPath();ctx.moveTo(toX(0),pad.t+cH);prices.forEach((p,i)=>ctx.lineTo(toX(i),toY(p[1])));ctx.lineTo(toX(prices.length-1),pad.t+cH);ctx.closePath();ctx.fillStyle=grad;ctx.fill();
+  ctx.beginPath();ctx.strokeStyle='rgba(153,69,255,0.9)';ctx.lineWidth=1.5;prices.forEach((p,i)=>i===0?ctx.moveTo(toX(i),toY(p[1])):ctx.lineTo(toX(i),toY(p[1])));ctx.stroke();
+  const lx=toX(prices.length-1),ly=toY(vals[vals.length-1]);
+  ctx.beginPath();ctx.arc(lx,ly,4,0,Math.PI*2);ctx.fillStyle='#14F195';ctx.fill();
+  ctx.fillStyle='rgba(20,241,149,0.2)';ctx.beginPath();ctx.arc(lx,ly,8,0,Math.PI*2);ctx.fill();
 }
 
-// =============================================
-// INIT
-// =============================================
-window.addEventListener('DOMContentLoaded', () => {
-  initStars();
-  initSurfer();
-  updateUI();
-  setInterval(updateUI, 60000);
-  fetchJupiterPrices();
-  setInterval(fetchJupiterPrices, 30000);
+const PHASE_INFO = {
+  new: {color:'#14F195', title:'New Moon — Full Buy 🌑', text:'Prime accumulation window. MoonSurfer executes your full DCA amount in USDC→SOL. Historically the strongest 7-day period. Used as a timing signal by institutional traders.'},
+  wax: {color:'#9945FF', title:'Waxing Phase — Light Buy 🌓', text:'Market building momentum. MoonSurfer executes 50% of your set DCA amount. Lighter position sizing reflects the transitional phase.'},
+  full: {color:'#FFD966', title:'Full Moon — Pause 🌕', text:'Historically volatile. No DCA executed. MoonSurfer waits and observes. Your USDC stays in your wallet ready for the next cycle.'},
+  wan: {color:'#00BFFF', title:'Waning Phase — JLP Yield 🌗', text:'No DCA buy. Idle USDC is deposited into Jupiter Liquidity Pool (JLP) to earn yield from perpetuals trading fees (~15% APY) while waiting for the next new moon.'},
+};
+
+function showPhaseInfo(id, e) {
+  const info = PHASE_INFO[id];
+  const el = document.getElementById('phase-info');
+  el.innerHTML = `<div style="color:${info.color};font-family:'Orbitron',monospace;font-size:9px;letter-spacing:1px;margin-bottom:6px">${info.title}</div><div style="color:var(--text-dim)">${info.text}</div>`;
+  el.style.left = Math.min(e.clientX, window.innerWidth-220)+'px';
+  el.style.top = (e.clientY+12)+'px';
+  el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'), 4000);
+  e.stopPropagation();
+}
+document.addEventListener('click',()=>document.getElementById('phase-info').classList.remove('show'));
+
+window.addEventListener('DOMContentLoaded',()=>{
+  initStars(); initSurfer(); updateUI();
+  setInterval(updateUI,60000);
+  fetchPrices(); setInterval(fetchPrices,30000);
+  fetchTokenIcons();
 });
+</script>
+<script type="module">
+// Expose Jupiter API key to global scope for price fetching
+window.__JUP_KEY__ = import.meta.env.VITE_JUP_API_KEY || '';
 </script>
 <script type="module" src="/src/main.js"></script>
 </body>

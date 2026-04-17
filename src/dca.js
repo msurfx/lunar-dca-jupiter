@@ -83,12 +83,16 @@ export async function fetchDCAOrders() {
 
   try {
     const params = new URLSearchParams({
-      user:          walletPublicKey.toBase58(),
-      orderStatus:   "active",
-      recurringType: "time",
+      user:             walletPublicKey.toBase58(),
+      orderStatus:      "active",
+      recurringType:    "time",
+      includeFailedTx:  "false",
     });
     const data = await jupiterFetch(`/recurring/v1/getRecurringOrders?${params}`);
-    return (data.orders ?? []).map(normalise);
+    const rawOrders = data.orders ?? [];
+    console.log("[DCA] orders count:", rawOrders.length);
+    if (rawOrders.length > 0) console.log("[DCA] first order:", JSON.stringify(rawOrders[0], null, 2));
+    return rawOrders.map(normalise);
   } catch (err) {
     console.warn("[DCA] Recurring API unavailable, falling back to on-chain SDK:", err.message);
     return getDCA().getCurrentByUser(walletPublicKey);
@@ -105,6 +109,8 @@ function normalise(o) {
 
   return {
     publicKey: { toBase58: () => o.orderKey },
+    trades: o.trades ?? [],
+    inAmountPerCycle: parseInt(o.rawInAmountPerCycle) / 1e6,
     account: {
       inAmountPerCycle: { toNumber: () => parseInt(o.rawInAmountPerCycle) },
       inDeposited:      { toNumber: () => parseInt(o.rawInDeposited) },

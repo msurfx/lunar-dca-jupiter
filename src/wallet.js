@@ -87,11 +87,18 @@ export async function connectWallet() {
     const resp = await window.solana.connect();
     walletPublicKey = resp.publicKey;
 
-    const addr = walletPublicKey.toBase58();
-    btn.textContent = `◎ ${addr.slice(0, 4)}...${addr.slice(-4)}`;
+    btn.textContent = "Disconnect";
     btn.style.color = "var(--sol-green)";
     btn.style.borderColor = "rgba(20,241,149,0.3)";
     btn.style.opacity = "1";
+    window.__walletConnected = true;
+
+    const addrEl = document.getElementById('wallet-addr');
+    if (addrEl) {
+      const addr = resp.publicKey.toString();
+      addrEl.textContent = addr.slice(0,4)+'...'+addr.slice(-4);
+      addrEl.style.display = 'block';
+    }
 
     await detectNetwork();
     fetchWalletBalances();
@@ -102,16 +109,50 @@ export async function connectWallet() {
   }
 }
 
+export async function disconnectWallet() {
+  try {
+    await window.solana?.disconnect();
+  } catch { /* ignore */ }
+
+  walletPublicKey = null;
+
+  window.__walletConnected = false;
+
+  const btn = document.getElementById("wbtn");
+  if (btn) {
+    btn.textContent = "Connect Wallet";
+    btn.style.color = "";
+    btn.style.borderColor = "";
+    btn.style.opacity = "1";
+  }
+
+  for (const id of ["d-sol", "d-usdc", "d-jlp-bal"]) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = "—";
+  }
+  const jlpUsd = document.getElementById("d-jlp-usd");
+  if (jlpUsd) jlpUsd.textContent = "0.00";
+
+  const addrEl = document.getElementById('wallet-addr');
+  if (addrEl) addrEl.style.display = 'none';
+}
+
 export async function tryAutoConnect() {
   if (!window.solana?.isPhantom) return;
   try {
     const resp = await window.solana.connect({ onlyIfTrusted: true });
     walletPublicKey = resp.publicKey;
-    const addr = walletPublicKey.toBase58();
     const btn = document.getElementById("wbtn");
-    btn.textContent = `◎ ${addr.slice(0, 4)}...${addr.slice(-4)}`;
+    btn.textContent = "Disconnect";
     btn.style.color = "var(--sol-green)";
     btn.style.borderColor = "rgba(20,241,149,0.3)";
+    window.__walletConnected = true;
+    const addrEl = document.getElementById('wallet-addr');
+    if (addrEl) {
+      const addr = resp.publicKey.toString();
+      addrEl.textContent = addr.slice(0,4)+'...'+addr.slice(-4);
+      addrEl.style.display = 'block';
+    }
     await detectNetwork();
     fetchWalletBalances();
   } catch {

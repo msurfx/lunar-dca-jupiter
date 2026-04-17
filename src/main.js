@@ -1,10 +1,12 @@
-import { connectWallet, tryAutoConnect, walletPublicKey, fetchWalletBalances, setLastJLPPrice } from "./wallet.js";
+import { connectWallet, disconnectWallet, tryAutoConnect, walletPublicKey, fetchWalletBalances, setLastJLPPrice } from "./wallet.js";
 import { launchDCAOrder, fetchDCAOrders, closeDCA } from "./dca.js";
 import { swapUSDCtoJLP, getJLPApy } from "./jlp.js";
 
 // ── Wallet ──────────────────────────────────────────────────────────────────
 window.connectWallet = connectWallet;
+window.disconnectWallet = disconnectWallet;
 window.__setJLPPrice = setLastJLPPrice;
+
 
 // ── JLP toggle ───────────────────────────────────────────────────────────────
 window.toggleJLP = () => {
@@ -104,6 +106,16 @@ export async function refreshDCAOrders() {
     return;
   }
 
+  console.log("[DCA] raw orders:", JSON.stringify(orders, null, 2));
+  window.dcaTrades = orders.flatMap(o => {
+    const timestamps = o.trades?.length
+      ? o.trades.map(t => new Date(t.confirmedAt).getTime())
+      : [o.account.createdAt.toNumber() * 1000];
+    return timestamps.map(timestamp => ({ timestamp, amountUsdc: o.inAmountPerCycle }));
+  });
+  console.log("[DCA] dcaTrades:", window.dcaTrades);
+  if (typeof drawChart === "function" && document.getElementById('view-chart').classList.contains('active')) drawChart();
+
   const countEl = document.getElementById("d-orders");
   if (countEl) countEl.textContent = orders.length;
 
@@ -187,7 +199,12 @@ async function loadJLPApy() {
 
 // ── Init ─────────────────────────────────────────────────────────────────────
 window.addEventListener("DOMContentLoaded", () => {
-  tryAutoConnect().then(() => refreshDCAOrders());
+  tryAutoConnect().then(async () => {
+    await refreshDCAOrders();
+    if (typeof drawChart === "function") {
+      setTimeout(drawChart, 500);
+    }
+  });
   loadJLPApy();
   setInterval(fetchWalletBalances, 30_000);
   setInterval(refreshDCAOrders, 30_000);

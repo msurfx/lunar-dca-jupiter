@@ -334,7 +334,11 @@ header { display:flex; align-items:center; justify-content:space-between; flex-s
     </div>
     <div class="header-right">
       <div class="network-pill"><div class="net-dot"></div>Solana Mainnet</div>
-      <button class="wallet-btn" id="wbtn" onclick="connectWallet()">Connect Wallet</button>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span id="wallet-addr" style="font-family:'Orbitron',monospace;font-size:8px;color:var(--text-dim);letter-spacing:1px;display:none;padding:6px 10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:8px"></span>
+        <button class="wallet-btn" id="wbtn" onclick="window.__walletConnected ? window.disconnectWallet() : window.connectWallet()">Connect Wallet</button>
+      </div>
+<span id="wallet-addr" style="font-family:'Orbitron',monospace;font-size:8px;color:var(--text-dim);letter-spacing:1px;display:none"></span>
     </div>
   </header>
 
@@ -702,7 +706,7 @@ function switchTab(tab) {
   if(mobBtn) mobBtn.classList.add('active');
   if(view) view.classList.add('active');
   if(tab==='dash') updateDashboard();
-  if(tab==='chart') setTimeout(drawChart,100);
+  if(tab==='chart') setTimeout(()=>{ if(window.dcaTrades) drawChart(); else setTimeout(drawChart,2000); },300);
 }
 
 // JUPITER PRICES
@@ -829,6 +833,18 @@ async function drawChart() {
   const grad=ctx.createLinearGradient(0,pad.t,0,pad.t+cH);grad.addColorStop(0,'rgba(153,69,255,0.2)');grad.addColorStop(1,'rgba(153,69,255,0)');
   ctx.beginPath();ctx.moveTo(toX(0),pad.t+cH);prices.forEach((p,i)=>ctx.lineTo(toX(i),toY(p[1])));ctx.lineTo(toX(prices.length-1),pad.t+cH);ctx.closePath();ctx.fillStyle=grad;ctx.fill();
   ctx.beginPath();ctx.strokeStyle='rgba(153,69,255,0.9)';ctx.lineWidth=1.5;prices.forEach((p,i)=>i===0?ctx.moveTo(toX(i),toY(p[1])):ctx.lineTo(toX(i),toY(p[1])));ctx.stroke();
+  const chartStartMs=times[0], chartEndMs=times[times.length-1];
+  (window.dcaTrades||[]).forEach(trade=>{
+    if(trade.timestamp<chartStartMs||trade.timestamp>chartEndMs)return;
+    let nearestIdx=0,minDiff=Infinity;
+    times.forEach((t,i)=>{const d=Math.abs(t-trade.timestamp);if(d<minDiff){minDiff=d;nearestIdx=i;}});
+    const x=toX(nearestIdx);
+    const y=toY(vals[nearestIdx])-2;
+    ctx.beginPath();ctx.moveTo(x,y-10);ctx.lineTo(x-5,y);ctx.lineTo(x+5,y);ctx.closePath();
+    ctx.fillStyle='#14F195';ctx.fill();
+    ctx.fillStyle='rgba(20,241,149,0.8)';ctx.font='9px monospace';ctx.textAlign='center';
+    ctx.fillText('$'+(+trade.amountUsdc).toFixed(2),x,y-14);
+  });
   const lx=toX(prices.length-1),ly=toY(vals[vals.length-1]);
   ctx.beginPath();ctx.arc(lx,ly,4,0,Math.PI*2);ctx.fillStyle='#14F195';ctx.fill();
   ctx.fillStyle='rgba(20,241,149,0.2)';ctx.beginPath();ctx.arc(lx,ly,8,0,Math.PI*2);ctx.fill();

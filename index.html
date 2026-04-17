@@ -99,7 +99,7 @@ header { display:flex; align-items:center; justify-content:space-between; flex-s
 .panel { background:rgba(8,15,34,0.75); border-radius:20px; padding:20px 22px; backdrop-filter:blur(12px); display:flex; flex-direction:column; overflow:hidden; position:relative; }
 .panel-moon { border:1px solid rgba(153,69,255,0.18); align-items:center; }
 .panel-moon::before { content:''; position:absolute; top:-40px; left:-40px; width:200px; height:200px; background:radial-gradient(circle, rgba(153,69,255,0.08) 0%, transparent 70%); pointer-events:none; }
-.panel-dca { border:1px solid rgba(20,241,149,0.12); gap:12px; }
+.panel-dca { border:1px solid rgba(20,241,149,0.12); gap:12px; overflow:visible; }
 .panel-dca::before { content:''; position:absolute; bottom:-40px; right:-40px; width:200px; height:200px; background:radial-gradient(circle, rgba(20,241,149,0.06) 0%, transparent 70%); pointer-events:none; }
 .panel-title { font-family:'Orbitron',monospace; font-size:9px; letter-spacing:4px; color:var(--text-dim); text-transform:uppercase; margin-bottom:14px; text-align:center; }
 
@@ -122,7 +122,7 @@ header { display:flex; align-items:center; justify-content:space-between; flex-s
 .live-dot { width:5px; height:5px; border-radius:50%; background:var(--sol-green); animation:blink 2s ease-in-out infinite; }
 
 /* DCA PANEL */
-.phases-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; }
+.phases-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; position:relative; }
 .phase-chip { padding:7px 4px; border-radius:10px; text-align:center; border:1px solid rgba(255,255,255,0.07); transition:all 0.4s ease; }
 .phase-chip.active { transform:scale(1.05); }
 .chip-icon { font-size:16px; display:block; }
@@ -700,24 +700,10 @@ function setTokenIcon(imgId, fbId, url) {
   img.onerror = () => {};
 }
 
-async function fetchTokenIcons() {
-  // Jupiter Token API v1 — returns logoURI for any verified token
-  const BASE = 'https://lite-api.jup.ag/tokens/v1/token/';
-  const headers = JUP_KEY ? { 'x-api-key': JUP_KEY } : {};
-  try {
-    const [solData, jlpData] = await Promise.all([
-      fetch(BASE + SOL_MINT,  { headers }).then(r=>r.json()),
-      fetch(BASE + JLP_MINT,  { headers }).then(r=>r.json()),
-    ]);
-    if (solData.logoURI) {
-      // SOL icons — update all instances
-      document.querySelectorAll('img[alt="SOL"]').forEach(img => { img.src = solData.logoURI; });
-    }
-    if (jlpData.logoURI) {
-      setTokenIcon('jlp-icon-ps',   'jlp-fallback-ps',   jlpData.logoURI);
-      setTokenIcon('jlp-icon-dash', 'jlp-fallback-dash', jlpData.logoURI);
-    }
-  } catch(e) { console.log('Token icon fetch failed', e); }
+function fetchTokenIcons() {
+  const icon = `https://img.jup.ag/tokens/${JLP_MINT}`;
+  setTokenIcon('jlp-icon-ps',   'jlp-fallback-ps',   icon);
+  setTokenIcon('jlp-icon-dash', 'jlp-fallback-dash', icon);
 }
 
 async function fetchPrices() {
@@ -833,15 +819,19 @@ const PHASE_INFO = {
 
 function showPhaseInfo(id, e) {
   const info = PHASE_INFO[id];
-  const el = document.getElementById('phase-info');
-  el.innerHTML = `<div style="color:${info.color};font-family:'Orbitron',monospace;font-size:9px;letter-spacing:1px;margin-bottom:6px">${info.title}</div><div style="color:var(--text-dim)">${info.text}</div>`;
-  el.style.left = Math.min(e.clientX, window.innerWidth-220)+'px';
-  el.style.top = (e.clientY+12)+'px';
-  el.classList.add('show');
-  setTimeout(()=>el.classList.remove('show'), 4000);
+  let el = document.getElementById('phase-info');
+  if (!el) { el = document.createElement('div'); el.id='phase-info'; el.className='phase-info'; document.body.appendChild(el); }
+  el.innerHTML = `<div style="color:${info.color};font-family:'Orbitron',monospace;font-size:9px;letter-spacing:1px;margin-bottom:6px">${info.title}</div><div style="color:var(--text-dim);font-size:12px;line-height:1.6">${info.text}</div>`;
+  el.style.cssText = `display:block;position:fixed;z-index:9999;left:${Math.min(e.clientX,window.innerWidth-220)}px;top:${e.clientY+12}px;width:220px;background:rgba(4,8,24,0.97);border:1px solid ${info.color}44;border-radius:12px;padding:14px 16px;box-shadow:0 0 20px ${info.color}22;pointer-events:none;`;
+  setTimeout(()=>{ if(el) el.style.display='none'; }, 4000);
   e.stopPropagation();
 }
-document.addEventListener('click',()=>document.getElementById('phase-info').classList.remove('show'));
+document.addEventListener('click',(e)=>{
+  if(!e.target.closest('.phase-chip')) {
+    const el=document.getElementById('phase-info');
+    if(el) el.style.display='none';
+  }
+});
 
 window.addEventListener('DOMContentLoaded',()=>{
   initStars(); initSurfer(); updateUI();

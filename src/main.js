@@ -1,5 +1,5 @@
 import { connectWallet, tryAutoConnect, walletPublicKey, fetchWalletBalances } from "./wallet.js";
-import { launchDCAOrder } from "./dca.js";
+import { launchDCAOrder, fetchDCAOrders } from "./dca.js";
 import { swapUSDCtoJLP, getJLPApy } from "./jlp.js";
 
 // ── Wallet ──────────────────────────────────────────────────────────────────
@@ -58,6 +58,7 @@ window.launchDCA = async () => {
       "0 0 30px rgba(20,241,149,0.3)");
     console.log("[DCA] tx:", sig, "account:", dcaAccount);
     resetBtn(btn, 5000);
+    refreshDCAOrders();
   } catch (err) {
     resetBtn(btn, 0);
     console.error("[DCA] failed:", err);
@@ -84,12 +85,70 @@ window.beginNow = async () => {
       "0 0 30px rgba(20,241,149,0.3)");
     console.log("[DCA mid-cycle] tx:", sig, "account:", dcaAccount);
     resetBtn(btn, 5000);
+    refreshDCAOrders();
   } catch (err) {
     resetBtn(btn, 0);
     console.error("[DCA mid-cycle] failed:", err);
     alert("DCA failed: " + err.message);
   }
 };
+
+// ── DCA orders ───────────────────────────────────────────────────────────────
+export async function refreshDCAOrders() {
+  let orders;
+  try {
+    orders = await fetchDCAOrders();
+  } catch (err) {
+    console.error("fetchDCAOrders failed:", err);
+    return;
+  }
+
+  const countEl = document.getElementById("d-orders");
+  if (countEl) countEl.textContent = orders.length;
+
+  const list = document.getElementById("tx-list");
+  if (!list) return;
+
+  if (orders.length === 0) {
+    list.innerHTML =
+      `<div class="tx-row"><div class="tx-left">` +
+      `<div class="tx-dot" style="background:var(--text-dim)"></div>` +
+      `<div class="tx-info"><span class="tx-type" style="color:var(--text-dim)">No open DCA orders</span>` +
+      `<span class="tx-time">Launch an orbit to get started</span></div></div></div>`;
+    return;
+  }
+
+  list.innerHTML = orders.map(renderDCARow).join("");
+}
+
+function renderDCARow(order) {
+  const a = order.account;
+  const perCycle  = a.inAmountPerCycle.toNumber() / 1e6;
+  const deposited = a.inDeposited.toNumber()      / 1e6;
+  const used      = a.inUsed.toNumber()           / 1e6;
+  const received  = a.outReceived.toNumber()       / 1e9; // lamports → SOL
+  const remaining = Math.max(0, deposited - used);
+
+  const secsLeft  = a.nextCycleAt.toNumber() - Math.floor(Date.now() / 1000);
+  const nextLabel = secsLeft <= 0        ? "Next buy: imminent"
+                  : secsLeft < 3_600     ? `Next buy: ${Math.round(secsLeft / 60)}m`
+                  : secsLeft < 86_400    ? `Next buy: ${Math.round(secsLeft / 3_600)}h`
+                  :                        `Next buy: ${Math.round(secsLeft / 86_400)}d`;
+
+  const color = "var(--sol-green)";
+  return (
+    `<div class="tx-row">` +
+      `<div class="tx-left">` +
+        `<div class="tx-dot" style="background:${color}"></div>` +
+        `<div class="tx-info">` +
+          `<span class="tx-type">DCA Active · ${perCycle.toFixed(2)} USDC/cycle</span>` +
+          `<span class="tx-time">${nextLabel} · ${remaining.toFixed(2)} USDC left</span>` +
+        `</div>` +
+      `</div>` +
+      `<span class="tx-amount" style="color:${color}">+${received.toFixed(4)} SOL</span>` +
+    `</div>`
+  );
+}
 
 // ── JLP APY display ──────────────────────────────────────────────────────────
 async function loadJLPApy() {
@@ -100,9 +159,10 @@ async function loadJLPApy() {
 
 // ── Init ─────────────────────────────────────────────────────────────────────
 window.addEventListener("DOMContentLoaded", () => {
-  tryAutoConnect();
+  tryAutoConnect().then(() => refreshDCAOrders());
   loadJLPApy();
   setInterval(fetchWalletBalances, 30_000);
+  setInterval(refreshDCAOrders, 30_000);
 });
 
 // ── Helpers ──────────────────────────────────────────────────────────────────

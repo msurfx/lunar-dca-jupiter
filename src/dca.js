@@ -59,6 +59,36 @@ async function ensureUSDCAta() {
 }
 
 /**
+ * Fetch open DCA orders for the connected wallet.
+ * Uses getCurrentByUser (memcmp filter) — not getAll() which would fetch every order on-chain.
+ * In simulation mode returns a single mock order.
+ */
+export async function fetchDCAOrders() {
+  if (!walletPublicKey) return [];
+
+  if (isSimulation) {
+    const now = Math.floor(Date.now() / 1000);
+    return [
+      {
+        publicKey: { toBase58: () => "SIM_DCA_DEMO" },
+        account: {
+          inputMint: USDC_MINT,
+          outputMint: SOL_MINT,
+          inAmountPerCycle: { toNumber: () => 250_000 },   // 0.25 USDC
+          inDeposited:      { toNumber: () => 1_000_000 }, // 1 USDC total
+          inUsed:           { toNumber: () => 250_000 },   // 1 cycle done
+          outReceived:      { toNumber: () => 3_500_000 }, // ~0.0035 SOL
+          nextCycleAt:      { toNumber: () => now + 86400 * 3 },
+          createdAt:        { toNumber: () => now - 86400 * 7 },
+        },
+      },
+    ];
+  }
+
+  return getDCA().getCurrentByUser(walletPublicKey);
+}
+
+/**
  * Launch a Jupiter DCA order: USDC → SOL
  * In simulation mode: mocks the response without sending any transaction.
  * @param {number} amountUsdc       - base amount per cycle in USDC

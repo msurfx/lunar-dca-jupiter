@@ -145,6 +145,7 @@ export async function refreshDCAOrders() {
   });
   console.log("[DCA] dcaTrades:", window.dcaTrades);
   if (typeof drawChart === "function" && document.getElementById('view-chart').classList.contains('active')) drawChart();
+  updatePerfPanel();
 
   const countEl = document.getElementById("d-orders");
   if (countEl) countEl.textContent = orders.length;
@@ -239,6 +240,27 @@ window.addEventListener("DOMContentLoaded", () => {
   setInterval(fetchWalletBalances, 30_000);
   setInterval(refreshDCAOrders, 30_000);
 });
+
+// ── Performance panel ────────────────────────────────────────────────────────
+function updatePerfPanel() {
+  const trades = window.dcaTrades?.filter(t => t.type === 'buy') ?? [];
+  if (!trades.length) {
+    ['perf-invested','perf-sol','perf-avg','perf-yield'].forEach(id => {
+      const el = document.getElementById(id); if (el) el.textContent = '—';
+    });
+    return;
+  }
+  const totalUsdc = trades.reduce((s,t) => s + (t.amountUsdc||0), 0);
+  const totalSol  = trades.reduce((s,t) => s + (t.solReceived||0), 0);
+  const avgPrice  = totalSol > 0 ? totalUsdc / totalSol : 0;
+  const el1 = document.getElementById('perf-invested'); if (el1) el1.textContent = totalUsdc.toFixed(2)+' USDC';
+  const el2 = document.getElementById('perf-sol');      if (el2) el2.textContent = totalSol.toFixed(5)+' SOL';
+  const el3 = document.getElementById('perf-avg');      if (el3) el3.textContent = avgPrice > 0 ? '~$'+avgPrice.toFixed(2) : '—';
+  const jlpBal   = parseFloat(document.getElementById('d-jlp-bal')?.textContent) || 0;
+  const jlpPrice = parseFloat(document.getElementById('ps-jlp')?.textContent?.replace('$','')) || 0;
+  const yieldEst = jlpBal * jlpPrice * 0.15 / 12;
+  const el4 = document.getElementById('perf-yield'); if (el4) el4.textContent = yieldEst > 0 ? '~$'+yieldEst.toFixed(4) : '—';
+}
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 function setBtn(btn, text, opacity, bg = "", shadow = "") {

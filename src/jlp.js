@@ -67,6 +67,61 @@ export async function swapUSDCtoJLP(amountUsdc) {
 }
 
 /**
+ * Swap SOL → USDC via Jupiter Swap v2 (full moon exit).
+ */
+export async function swapSOLtoUSDC(amountSol) {
+  if (!walletPublicKey) throw new Error("Wallet not connected");
+
+  if (isSimulation) {
+    await new Promise((r) => setTimeout(r, 1200));
+    const fakeSig = "SIM" + Math.random().toString(36).slice(2, 10).toUpperCase();
+    console.log(`[SIM] SOL→USDC swap — ${amountSol} SOL\n  sig: ${fakeSig}`);
+    return fakeSig;
+  }
+
+  const SOL_MINT  = "So11111111111111111111111111111111111111112";
+  const amountRaw = Math.round(amountSol * 1_000_000_000); // SOL 9 decimals
+
+  const params = new URLSearchParams({
+    inputMint:   SOL_MINT,
+    outputMint:  USDC_MINT,
+    amount:      amountRaw.toString(),
+    taker:       walletPublicKey.toBase58(),
+    slippageBps: "50",
+  });
+
+  const order = await withRetry(() => jupiterFetch(`/swap/v2/order?${params}`));
+  if (order.error || !order.transaction) {
+    throw new Error(`Swap order: ${order.error ?? "no transaction returned"}`);
+  }
+
+  const tx     = VersionedTransaction.deserialize(Buffer.from(order.transaction, "base64"));
+  const signed = await window.solana.signTransaction(tx);
+  const signedB64 = Buffer.from(signed.serialize()).toString("base64");
+
+  const result = await withRetry(() =>
+    jupiterFetch("/swap/v2/execute", {
+      method:  "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        signedTransaction: signedB64,
+        requestId:         order.requestId,
+      }),
+    })
+  );
+
+  if (result.status !== "Success") {
+    throw Object.assign(
+      new Error(`SOL→USDC swap failed: ${result.error ?? "unknown"}`),
+      { code: result.code }
+    );
+  }
+
+  console.log(`[SELL] swapped ${amountSol} SOL → USDC  sig:`, result.signature);
+  return result.signature;
+}
+
+/**
  * Fetch current JLP APY from Jupiter's stats endpoint (display only).
  */
 export async function getJLPApy() {

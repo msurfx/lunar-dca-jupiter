@@ -108,10 +108,18 @@ export async function refreshDCAOrders() {
 
   console.log("[DCA] raw orders:", JSON.stringify(orders, null, 2));
   window.dcaTrades = orders.flatMap(o => {
+    const perCycle = o.account.inAmountPerCycle.toNumber() / 1e6;
+    const totalOut = o.account.outReceived.toNumber() / 1e9;
     const timestamps = o.trades?.length
       ? o.trades.map(t => new Date(t.confirmedAt).getTime())
       : [o.account.createdAt.toNumber() * 1000];
-    return timestamps.map(timestamp => ({ timestamp, amountUsdc: o.inAmountPerCycle }));
+    const solEach = totalOut / Math.max(1, timestamps.length);
+    return timestamps.map(timestamp => ({
+      timestamp,
+      amountUsdc:  +perCycle.toFixed(4),
+      solReceived: +solEach.toFixed(6),
+      type: 'buy'
+    }));
   });
   console.log("[DCA] dcaTrades:", window.dcaTrades);
   if (typeof drawChart === "function" && document.getElementById('view-chart').classList.contains('active')) drawChart();

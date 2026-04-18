@@ -849,6 +849,8 @@ async function drawChart() {
   ctx.beginPath();ctx.moveTo(toX(0),pad.t+cH);prices.forEach((p,i)=>ctx.lineTo(toX(i),toY(p[1])));ctx.lineTo(toX(prices.length-1),pad.t+cH);ctx.closePath();ctx.fillStyle=grad;ctx.fill();
   ctx.beginPath();ctx.strokeStyle='rgba(153,69,255,0.9)';ctx.lineWidth=1.5;prices.forEach((p,i)=>i===0?ctx.moveTo(toX(i),toY(p[1])):ctx.lineTo(toX(i),toY(p[1])));ctx.stroke();
   const chartStartMs=times[0], chartEndMs=times[times.length-1];
+  window.chartStartMs=chartStartMs; window.chartEndMs=chartEndMs;
+  window._chartTimes=times; window._chartVals=vals;
   (window.dcaTrades||[]).forEach(trade=>{
     if(trade.timestamp<chartStartMs||trade.timestamp>chartEndMs)return;
     let nearestIdx=0,minDiff=Infinity;
@@ -908,6 +910,58 @@ function showConfInfo() {
     <div style="font-size:11px;color:var(--text-dim);line-height:1.6;margin-bottom:16px">Based on Dichev & Janes (2001) research showing stock returns are historically <strong style="color:var(--sol-green)">3-5% higher around new moons</strong> vs full moons. Score also factors in the JLP yield opportunity during waning phases.</div>
     <button onclick="document.getElementById('conf-info-popup').style.display='none'" style="width:100%;padding:10px;background:linear-gradient(135deg,var(--sol-purple),#5500EE);border:none;border-radius:10px;color:white;font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;cursor:pointer">GOT IT</button>
   `;
+}
+
+function setupChartTooltip() {
+  const canvas = document.getElementById('price-chart');
+  if (!canvas) return;
+  const tip = document.createElement('div');
+  Object.assign(tip.style, {
+    position:'fixed', pointerEvents:'none', display:'none',
+    background:'rgba(10,8,30,.97)', border:'1px solid #9945FF',
+    borderRadius:'8px', padding:'8px 12px', color:'#e0d7ff',
+    fontFamily:"'Rajdhani',sans-serif", fontSize:'13px', lineHeight:'1.6',
+    zIndex:'9999', minWidth:'160px', boxShadow:'0 4px 20px rgba(153,69,255,.3)'
+  });
+  document.body.appendChild(tip);
+  canvas.addEventListener('mousemove', e => {
+    const trades = window.dcaTrades;
+    if (!trades?.length || !window.chartStartMs || !window._chartTimes) { tip.style.display='none'; return; }
+    const rect = canvas.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    const mx = (e.clientX - rect.left) * (canvas.width / rect.width);
+    const my = (e.clientY - rect.top) * (canvas.height / rect.height);
+    const times = window._chartTimes, vals = window._chartVals;
+    const W = canvas.offsetWidth, H = 280;
+    const pad = {l:50,r:16,t:20,b:30};
+    const cW = W-pad.l-pad.r, cH = H-pad.t-pad.b;
+    const minV = Math.min(...vals)*0.995, maxV = Math.max(...vals)*1.005;
+    const toX = i => (pad.l + (i/(times.length-1))*cW) * dpr;
+    const toY = v => (pad.t + cH - ((v-minV)/(maxV-minV))*cH) * dpr;
+    let closest = null, minDist = Infinity;
+    trades.forEach(trade => {
+      if (trade.timestamp < window.chartStartMs || trade.timestamp > window.chartEndMs) return;
+      let ni = 0, md = Infinity;
+      times.forEach((t,i) => { const d=Math.abs(t-trade.timestamp); if(d<md){md=d;ni=i;} });
+      const tx = toX(ni);
+      const ty = trade.type==='sell' ? (pad.t+14)*dpr : toY(vals[ni])-2*dpr;
+      const dist = Math.hypot(mx-tx, my-ty);
+      if (dist < minDist) { minDist=dist; closest={trade,tx,ty}; }
+    });
+    if (closest && minDist < 24*dpr) {
+      const {trade} = closest;
+      const d = new Date(trade.timestamp);
+      const ds = d.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})
+               + ' ' + d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+      tip.innerHTML = trade.type==='sell'
+        ? `<div style="color:#FF6B6B;font-weight:700">▼ Closed</div><div>${ds}</div><div>SOL: <b>${(+trade.solReceived).toFixed(5)}</b></div>`
+        : `<div style="color:#14F195;font-weight:700">▲ DCA Buy</div><div>${ds}</div><div>Spent: <b>${(+trade.amountUsdc).toFixed(2)} USDC</b></div><div>Got: <b>${(+trade.solReceived).toFixed(5)} SOL</b></div>`;
+      let left = e.clientX + 14;
+      if (left + 180 > window.innerWidth) left = e.clientX - 190;
+      tip.style.left = left+'px'; tip.style.top = (e.clientY-10)+'px'; tip.style.display='block';
+    } else { tip.style.display='none'; }
+  });
+  canvas.addEventListener('mouseleave', () => { tip.style.display='none'; });
 }
 
 function checkLunarBanner() {

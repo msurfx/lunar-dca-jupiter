@@ -82,16 +82,49 @@ export async function fetchDCAOrders() {
   }
 
   try {
-    const params = new URLSearchParams({
-      user:             walletPublicKey.toBase58(),
-      orderStatus:      "active",
-      recurringType:    "time",
-      includeFailedTx:  "false",
+    const base = { user: walletPublicKey.toBase58(), recurringType: "time", includeFailedTx: "false" };
+    const [activeData, completedData] = await Promise.all([
+      jupiterFetch(`/recurring/v1/getRecurringOrders?${new URLSearchParams({ ...base, orderStatus: "active" })}`),
+      jupiterFetch(`/recurring/v1/getRecurringOrders?${new URLSearchParams({ ...base, orderStatus: "completed" })}`),
+    ]);
+    const activeOrders    = activeData?.orders    ?? [];
+    const completedOrders = completedData?.orders ?? [];
+    const rawOrders = [...activeOrders, ...completedOrders];
+
+    console.log("[DCA] active:", activeOrders.length, "completed:", completedOrders.length);
+
+    // Build window.dcaTrades from all executed cycles
+    window.dcaTrades = [];
+    [...activeOrders, ...completedOrders].forEach(order => {
+      const cycleAmt    = parseInt(order.rawInAmountPerCycle ?? 0) / 1e6;
+      const totalIn     = parseInt(order.rawInUsed           ?? 0) / 1e6;
+      const totalOut    = parseInt(order.rawOutReceived       ?? 0) / 1e9;
+      const freq        = parseInt(order.cycleFrequency       ?? 86400);
+      const cycles      = cycleAmt > 0 ? Math.max(1, Math.round(totalIn / cycleAmt)) : 0;
+      const solPerCycle = cycles > 0 ? totalOut / cycles : 0;
+      const startTs     = new Date(order.createdAt).getTime();
+
+      for (let i = 0; i < cycles; i++) {
+        window.dcaTrades.push({
+          timestamp:   startTs + freq * (i + 1) * 1000,
+          amountUsdc:  +cycleAmt.toFixed(4),
+          solReceived: +solPerCycle.toFixed(6),
+          type:        'buy',
+        });
+      }
+      if (order.closedAt) {
+        window.dcaTrades.push({
+          timestamp:   new Date(order.closedAt).getTime(),
+          amountUsdc:  0,
+          solReceived: +totalOut.toFixed(6),
+          type:        'sell',
+        });
+      }
     });
-    const data = await jupiterFetch(`/recurring/v1/getRecurringOrders?${params}`);
-    const rawOrders = data.orders ?? [];
-    console.log("[DCA] orders count:", rawOrders.length);
-    if (rawOrders.length > 0) console.log("[DCA] first order:", JSON.stringify(rawOrders[0], null, 2));
+
+    // Tag completed orders so the renderer can badge them differently
+    completedOrders.forEach(o => { o._completed = true; });
+
     return rawOrders.map(normalise);
   } catch (err) {
     console.warn("[DCA] Recurring API unavailable, falling back to on-chain SDK:", err.message);

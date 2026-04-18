@@ -373,7 +373,17 @@ header { display:flex; align-items:center; justify-content:space-between; flex-s
     </div>
   </div>
 
-  <!-- HOME VIEW -->
+ <!-- LUNAR NOTIFICATION BANNER -->
+ <div id="lunar-banner" style="display:none;align-items:center;gap:8px;padding:10px 18px;background:linear-gradient(90deg,rgba(153,69,255,.18),rgba(20,241,149,.10));border:1px solid rgba(153,69,255,.35);border-radius:12px;font-family:'Rajdhani',sans-serif;font-size:.95em;color:#e0d7ff;flex-wrap:wrap">
+  <span id="lunar-banner-text">🌑 New Moon in 0h — DCA will execute</span>
+  <span style="flex:1"></span>
+  <span id="lunar-banner-amount" style="opacity:.8;font-size:.85em"></span>
+  <button onclick="document.getElementById('dca-amt')?.focus()" style="background:rgba(153,69,255,.25);border:1px solid #9945FF;color:#e0d7ff;border-radius:6px;padding:2px 10px;cursor:pointer;font-family:'Rajdhani',sans-serif">Edit</button>
+  <button id="lunar-banner-confirm" style="background:rgba(20,241,149,.2);border:1px solid #14F195;color:#14F195;border-radius:6px;padding:2px 10px;cursor:pointer;font-family:'Rajdhani',sans-serif">Confirm ✓</button>
+  <button onclick="document.getElementById('lunar-banner').style.display='none'" style="background:none;border:none;color:#9945FF;cursor:pointer;font-size:1.1em;padding:0 4px">✕</button>
+</div>
+
+<!-- HOME VIEW -->
   <div class="view active" id="view-home">
     <div class="main-row">
 
@@ -728,9 +738,14 @@ function setTokenIcon(imgId, fbId, url) {
 }
 
 function fetchTokenIcons() {
-  const icon = `https://img.jup.ag/tokens/${JLP_MINT}`;
-  setTokenIcon('jlp-icon-ps',   'jlp-fallback-ps',   icon);
-  setTokenIcon('jlp-icon-dash', 'jlp-fallback-dash', icon);
+  ['jlp-icon-ps', 'jlp-icon-dash'].forEach(id => {
+    const img = document.getElementById(id);
+    if (!img) return;
+    img.src = '/jlp.png';
+    img.style.display = 'block';
+    const fb = document.getElementById(id === 'jlp-icon-ps' ? 'jlp-fallback-ps' : 'jlp-fallback-dash');
+    if (fb) fb.style.display = 'none';
+  });
 }
 
 async function fetchPrices() {
@@ -895,11 +910,89 @@ function showConfInfo() {
   `;
 }
 
+function checkLunarBanner() {
+  if (!window.__walletConnected) return;
+  const day = getLunarDay();
+  const hoursLeft = (SYNODIC - day) * 24;
+  const banner = document.getElementById('lunar-banner');
+  if (!banner) return;
+  if (hoursLeft <= 48 && hoursLeft > 0.5) {
+    document.getElementById('lunar-banner-text').textContent =
+      `🌑 New Moon in ${Math.round(hoursLeft)}h — DCA will execute`;
+    const amt = parseFloat(document.getElementById('dca-amt')?.value);
+    const amtEl = document.getElementById('lunar-banner-amount');
+    if (amtEl) amtEl.textContent = amt > 0 ? `Amount: ${amt} USDC` : '';
+    banner.style.display = 'flex';
+  } else {
+    banner.style.display = 'none';
+  }
+}
+document.getElementById('lunar-banner-confirm')?.addEventListener('click', () => {
+  document.getElementById('lunar-banner').style.display = 'none';
+});
+
+function setupChartTooltip() {
+  const canvas = document.getElementById('price-chart');
+  if (!canvas) return;
+  const tip = document.createElement('div');
+  Object.assign(tip.style, {
+    position:'fixed', pointerEvents:'none', display:'none',
+    background:'rgba(10,8,30,.97)', border:'1px solid #9945FF',
+    borderRadius:'8px', padding:'8px 12px', color:'#e0d7ff',
+    fontFamily:"'Rajdhani',sans-serif", fontSize:'13px', lineHeight:'1.6',
+    zIndex:'9999', minWidth:'160px', boxShadow:'0 4px 20px rgba(153,69,255,.3)'
+  });
+  document.body.appendChild(tip);
+
+  canvas.addEventListener('mousemove', e => {
+    const trades = window.dcaTrades;
+    if (!trades?.length || !window.chartStartMs || !window._chartTimes) { tip.style.display='none'; return; }
+    const rect = canvas.getBoundingClientRect();
+    const dpr  = window.devicePixelRatio || 1;
+    const mx   = (e.clientX - rect.left) * (canvas.width  / rect.width);
+    const my   = (e.clientY - rect.top)  * (canvas.height / rect.height);
+    const times = window._chartTimes, vals = window._chartVals;
+    const W = canvas.offsetWidth, H = 280;
+    const pad = {l:50,r:16,t:20,b:30};
+    const cW = W - pad.l - pad.r, cH = H - pad.t - pad.b;
+    const minV = Math.min(...vals)*0.995, maxV = Math.max(...vals)*1.005;
+    const toX = i => (pad.l + (i/(times.length-1))*cW) * dpr;
+    const toY = v => (pad.t + cH - ((v-minV)/(maxV-minV))*cH) * dpr;
+
+    let closest = null, minDist = Infinity;
+    trades.forEach(trade => {
+      if (trade.timestamp < window.chartStartMs || trade.timestamp > window.chartEndMs) return;
+      let ni = 0, md = Infinity;
+      times.forEach((t,i) => { const d=Math.abs(t-trade.timestamp); if(d<md){md=d;ni=i;} });
+      const tx = toX(ni);
+      const ty = trade.type==='sell' ? (pad.t+14)*dpr : toY(vals[ni]) - 2*dpr;
+      const dist = Math.hypot(mx-tx, my-ty);
+      if (dist < minDist) { minDist=dist; closest={trade,tx,ty}; }
+    });
+
+    if (closest && minDist < 24*dpr) {
+      const {trade} = closest;
+      const d = new Date(trade.timestamp);
+      const ds = d.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})
+               + ' ' + d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+      tip.innerHTML = trade.type==='sell'
+        ? `<div style="color:#FF6B6B;font-weight:700">▼ Closed</div><div>${ds}</div><div>SOL: <b>${(+trade.solReceived).toFixed(5)}</b></div>`
+        : `<div style="color:#14F195;font-weight:700">▲ DCA Buy</div><div>${ds}</div><div>Spent: <b>${(+trade.amountUsdc).toFixed(2)} USDC</b></div><div>Got: <b>${(+trade.solReceived).toFixed(5)} SOL</b></div>`;
+      let left = e.clientX + 14;
+      if (left + 180 > window.innerWidth) left = e.clientX - 190;
+      tip.style.left = left+'px'; tip.style.top = (e.clientY-10)+'px'; tip.style.display='block';
+    } else { tip.style.display='none'; }
+  });
+  canvas.addEventListener('mouseleave', () => { tip.style.display='none'; });
+}
+
 window.addEventListener('DOMContentLoaded',()=>{
   initStars(); initSurfer(); updateUI();
   setInterval(updateUI,60000);
   fetchPrices(); setInterval(fetchPrices,30000);
   fetchTokenIcons();
+  setupChartTooltip();
+  checkLunarBanner();
 });
 </script>
 <script type="module" src="/src/main.js"></script>

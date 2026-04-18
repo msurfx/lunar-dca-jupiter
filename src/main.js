@@ -1,6 +1,6 @@
 import { connectWallet, disconnectWallet, tryAutoConnect, walletPublicKey, fetchWalletBalances, setLastJLPPrice } from "./wallet.js";
 import { launchDCAOrder, fetchDCAOrders, closeDCA } from "./dca.js";
-import { swapUSDCtoJLP, swapSOLtoUSDC, getJLPApy } from "./jlp.js";
+import { swapUSDCtoJLP, getJLPApy } from "./jlp.js";
 
 // ── Wallet ──────────────────────────────────────────────────────────────────
 window.connectWallet = connectWallet;
@@ -30,34 +30,7 @@ window.launchDCA = async () => {
   const phase = typeof getPhase === "function" ? getPhase(day) : { id: "wax", pct: 50 };
   const cyclePct = day / 29.53059;
 
-  // Full moon → sell SOL only if macro trend is bearish
-  if (phase.id === 'full') {
-    const currentPrice = parseFloat(document.getElementById('p-sol')?.textContent?.replace('$','')) || 0;
-    const lastBuyPrice = parseFloat(localStorage.getItem('ms_last_buy_price')) || 0;
-    const chg24h = parseFloat(document.getElementById('p-sol-chg')?.textContent) || 0;
 
-    if (chg24h > 2 && currentPrice > lastBuyPrice) {
-      setBtn(btn, "🌕 Full Moon — Holding (Uptrend)", 1, "linear-gradient(135deg,#FFD966,#CC9900)");
-      resetBtn(btn, 4000);
-      return;
-    }
-
-    setBtn(btn, "🌕 Selling SOL...", 0.7);
-    try {
-      const solBalance = parseFloat(document.getElementById('d-sol')?.textContent) || 0;
-      const sellAmt = solBalance > 0.01 ? +(solBalance * 0.95).toFixed(6) : 0.001;
-      const sig = await swapSOLtoUSDC(sellAmt);
-      setBtn(btn, "✓ SOL Sold → USDC", 1, "linear-gradient(135deg,#FFD966,#CC9900)");
-      console.log("[SELL] tx:", sig);
-      resetBtn(btn, 5000);
-      refreshDCAOrders();
-    } catch (err) {
-      resetBtn(btn, 0);
-      console.error("[SELL] failed:", err);
-      alert("Sell failed: " + err.message);
-    }
-    return;
-  }
 
   // Full moon / mid-cycle: show modal unless overriding
   if (phase.pct === 0 && !jlpEnabled) {
@@ -109,8 +82,6 @@ window.launchDCA = async () => {
       "linear-gradient(135deg,var(--sol-green),#00A068)",
       "0 0 30px rgba(20,241,149,0.3)");
       console.log("[DCA] tx:", sig, "account:", dcaAccount);
-      const solP = parseFloat(document.getElementById('p-sol')?.textContent?.replace('$','')) || 0;
-      if (solP > 0) localStorage.setItem('ms_last_buy_price', solP.toString());
     resetBtn(btn, 5000);
     refreshDCAOrders();
   } catch (err) {

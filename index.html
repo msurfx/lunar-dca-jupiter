@@ -986,6 +986,27 @@ function setupChartTooltip() {
   canvas.addEventListener('mouseleave', () => { tip.style.display='none'; });
 }
 
+function checkLunarBanner() {
+  if (!window.__walletConnected) return;
+  const day = getLunarDay();
+  const hoursLeft = (SYNODIC - day) * 24;
+  const banner = document.getElementById('lunar-banner');
+  if (!banner) return;
+  if (hoursLeft <= 48 && hoursLeft > 0.5) {
+    document.getElementById('lunar-banner-text').textContent =
+      `🌑 New Moon in ${Math.round(hoursLeft)}h — DCA will execute`;
+    const amt = parseFloat(document.getElementById('dca-amt')?.value);
+    const amtEl = document.getElementById('lunar-banner-amount');
+    if (amtEl) amtEl.textContent = amt > 0 ? `Amount: ${amt} USDC` : '';
+    banner.style.display = 'flex';
+  } else {
+    banner.style.display = 'none';
+  }
+}
+document.getElementById('lunar-banner-confirm')?.addEventListener('click', () => {
+  document.getElementById('lunar-banner').style.display = 'none';
+});
+
 window.addEventListener('DOMContentLoaded',()=>{
   initStars(); initSurfer(); updateUI();
   setInterval(updateUI,60000);
@@ -993,6 +1014,7 @@ window.addEventListener('DOMContentLoaded',()=>{
   fetchTokenIcons();
   setupChartTooltip();
   checkLunarBanner();
+  setInterval(checkLunarBanner, 60000);
 });
 </script>
 <script type="module" src="/src/main.js"></script>

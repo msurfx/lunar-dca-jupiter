@@ -92,6 +92,7 @@ export async function connectWallet() {
     btn.style.borderColor = "rgba(20,241,149,0.3)";
     btn.style.opacity = "1";
     window.__walletConnected = true;
+    if (window.checkLunarBanner) window.checkLunarBanner();
 
     const addrEl = document.getElementById('wallet-addr');
     if (addrEl) {

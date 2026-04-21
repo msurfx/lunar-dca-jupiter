@@ -435,10 +435,10 @@ header { display:flex; align-items:center; justify-content:space-between; flex-s
       <div class="panel panel-dca">
         <div class="panel-title">Configure DCA</div>
         <div class="phases-grid">
-          <div class="phase-chip" id="chip-new" onclick="showPhaseInfo('new',event)"><span class="chip-icon">🌑</span><span class="chip-name">New Moon</span><span class="chip-act" style="color:#14F195">100% Buy</span></div>
-          <div class="phase-chip" id="chip-wax" onclick="showPhaseInfo('wax',event)"><span class="chip-icon">🌓</span><span class="chip-name">Waxing</span><span class="chip-act" style="color:#9945FF">50% Buy</span></div>
-          <div class="phase-chip" id="chip-full" onclick="showPhaseInfo('full',event)"><span class="chip-icon">🌕</span><span class="chip-name">Full Moon</span><span class="chip-act" style="color:#FFD966">Pause</span></div>
-          <div class="phase-chip" id="chip-wan" onclick="showPhaseInfo('wan',event)"><span class="chip-icon">🌗</span><span class="chip-name">Waning</span><span class="chip-act" style="color:#00BFFF">JLP Yield</span></div>
+          <div class="phase-chip" id="chip-new" onclick="window.showPhaseInfo('new',event)"><span class="chip-icon">🌑</span><span class="chip-name">New Moon</span><span class="chip-act" style="color:#14F195">100% Buy</span></div>
+          <div class="phase-chip" id="chip-wax" onclick="window.showPhaseInfo('wax',event)"><span class="chip-icon">🌓</span><span class="chip-name">Waxing</span><span class="chip-act" style="color:#9945FF">50% Buy</span></div>
+          <div class="phase-chip" id="chip-full" onclick="window.showPhaseInfo('full',event)"><span class="chip-icon">🌕</span><span class="chip-name">Full Moon</span><span class="chip-act" style="color:#FFD966">Pause</span></div>
+          <div class="phase-chip" id="chip-wan" onclick="window.showPhaseInfo('wan',event)"><span class="chip-icon">🌗</span><span class="chip-name">Waning</span><span class="chip-act" style="color:#00BFFF">JLP Yield</span></div>
         </div>
         <div class="phase-info" id="phase-info"></div>
         <div class="token-row">
@@ -917,10 +917,11 @@ const PHASE_INFO = {
   wan: {color:'#00BFFF', title:'Waning Phase — JLP Yield 🌗', text:'No DCA buy. Idle USDC is deposited into Jupiter Liquidity Pool (JLP) to earn yield from perpetuals trading fees (~15% APY) while waiting for the next new moon.'},
 };
 
-function showPhaseInfo(id, e) {
+window.showPhaseInfo = function(id, e) {
   const info = PHASE_INFO[id];
   let el = document.getElementById('phase-info');
-  if (!el) { el = document.createElement('div'); el.id='phase-info'; el.className='phase-info'; document.body.appendChild(el); }
+  if (!el) { el = document.createElement('div'); el.id='phase-info'; el.className='phase-info'; }
+  document.body.appendChild(el);
   el.innerHTML = `<div style="color:${info.color};font-family:'Orbitron',monospace;font-size:10px;letter-spacing:1px;margin-bottom:8px;font-weight:700">${info.title}</div><div style="color:var(--text);font-size:13px;line-height:1.65">${info.text}</div>`;
 
   // Position smartly — keep inside viewport
@@ -938,7 +939,7 @@ function showPhaseInfo(id, e) {
   clearTimeout(el._timer);
   el._timer = setTimeout(()=>{ if(el) el.style.display='none'; }, 5000);
   e.stopPropagation();
-}
+};
 document.addEventListener('click',(e)=>{
   if(!e.target.closest('.phase-chip')) {
     const el=document.getElementById('phase-info');
@@ -953,7 +954,7 @@ function showConfInfo() {
     el.id = 'conf-info-popup';
     document.body.appendChild(el);
   }
-  el.style.cssText = `display:block;position:fixed;z-index:9999;left:50%;top:50%;transform:translate(-50%,-50%);width:min(420px,90vw);background:rgba(4,8,24,0.98);border:1px solid rgba(153,69,255,0.3);border-radius:16px;padding:24px;box-shadow:0 0 40px rgba(153,69,255,0.2);`;
+  el.style.cssText = `display:block;position:fixed;z-index:999999;left:50%;top:50%;transform:translate(-50%,-50%);width:min(420px,90vw);background:rgba(4,8,24,0.98);border:1px solid rgba(153,69,255,0.3);border-radius:16px;padding:24px;box-shadow:0 0 40px rgba(153,69,255,0.2);`;
   el.innerHTML = `
     <div style="font-family:'Orbitron',monospace;font-size:10px;letter-spacing:2px;color:var(--sol-purple);margin-bottom:14px">COSMIC CONFIDENCE SCORE</div>
     <div style="font-size:13px;color:var(--text-dim);line-height:1.7;margin-bottom:12px">A composite signal combining lunar phase timing with market conditions — the same logic quietly used by institutional traders.</div>

@@ -21,7 +21,8 @@ window.launchDCA = async () => {
     if (!walletPublicKey) return;
   }
 
-  const amountUsdc = parseFloat(document.getElementById("dca-amt").value) || 100;
+  const amountUsdc = parseFloat(document.getElementById("dca-amt").value) || 1;
+  if (!amountUsdc || amountUsdc < 0.1) { alert("Please enter a DCA amount first"); return; }
   const jlpEnabled = document.getElementById("jlp-tog").classList.contains("on");
   const btn = document.getElementById("launch-btn");
 
@@ -77,7 +78,9 @@ window.launchDCA = async () => {
   // New moon (100%) or waxing (50%) → DCA into SOL
   setBtn(btn, "🚀 Launching...", 0.7);
   try {
-    const { sig, dcaAccount } = await launchDCAOrder(amountUsdc, phase.pct / 100);
+    const multiplier = phase.id === 'new' ? 1.0 : phase.id === 'wax' ? 0.5 : 0;
+  if (multiplier === 0) { alert("DCA is paused during this phase."); resetBtn(btn, 0); return; }
+  const { sig, dcaAccount } = await launchDCAOrder(amountUsdc, multiplier);
     setBtn(btn, "🚀 DCA Orbit Active!", 1,
       "linear-gradient(135deg,var(--sol-green),#00A068)",
       "0 0 30px rgba(20,241,149,0.3)");
@@ -100,7 +103,8 @@ window.waitForMoon = () => {
 
 window.beginNow = async () => {
   document.getElementById("overlay").classList.remove("visible");
-  const amountUsdc = parseFloat(document.getElementById("dca-amt").value) || 100;
+  const amountUsdc = parseFloat(document.getElementById("dca-amt").value) || 1;
+  if (!amountUsdc || amountUsdc < 0.1) { alert("Please enter a DCA amount first"); return; }
   const btn = document.getElementById("launch-btn");
   setBtn(btn, "🚀 Launching at half tide...", 0.7);
   try {

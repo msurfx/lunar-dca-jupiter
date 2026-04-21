@@ -43,6 +43,7 @@ canvas#starfield { position:fixed; inset:0; z-index:0; }
 
 /* JUPITER */
 .jupiter-system { position:fixed; top:32px; right:100px; width:140px; height:140px; z-index:8; }
+@media (max-width:768px) { .jupiter-system { top:12px; right:8px; transform:scale(0.55); transform-origin:top right; } }
 .orbital-ring { position:absolute; width:180px; height:50px; border:1.5px solid rgba(0,209,140,0.25); border-radius:50%; top:38px; left:-20px; transform:rotateX(65deg); animation:ring-pulse 4s ease-in-out infinite; }
 .orbital-ring-2 { position:absolute; width:200px; height:55px; border:0.5px solid rgba(153,69,255,0.12); border-radius:50%; top:34px; left:-30px; transform:rotateX(65deg); animation:ring-pulse 6s ease-in-out infinite reverse; }
 @keyframes ring-pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
@@ -337,7 +338,7 @@ header { display:flex; align-items:center; justify-content:space-between; flex-s
     <div class="header-right">
       <div class="network-pill"><div class="net-dot"></div>Solana Mainnet</div>
       <div style="display:flex;align-items:center;gap:8px">
-        <span id="wallet-addr" style="font-family:'Orbitron',monospace;font-size:8px;color:var(--text-dim);letter-spacing:1px;display:none;padding:6px 10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:8px"></span>
+        <span id="wallet-addr" onclick="if(window.__walletConnected) window.disconnectWallet()" style="font-family:'Orbitron',monospace;font-size:8px;color:var(--text-dim);letter-spacing:1px;display:none;padding:6px 10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:8px;cursor:pointer;transition:all 0.2s" onmouseenter="if(window.__walletConnected){this.textContent='Disconnect';this.style.color='#FF6B6B';this.style.borderColor='rgba(255,107,107,0.3)'}" onmouseleave="if(window.__walletConnected){const a=window.solana?.publicKey?.toString();if(a)this.textContent=a.slice(0,4)+'...'+a.slice(-4);this.style.color='';this.style.borderColor='';}"></span>
         <button class="wallet-btn" id="wbtn" onclick="window.__walletConnected ? window.disconnectWallet() : window.connectWallet()">Connect Wallet</button>
       </div>
 <span id="wallet-addr" style="font-family:'Orbitron',monospace;font-size:8px;color:var(--text-dim);letter-spacing:1px;display:none"></span>
@@ -920,9 +921,22 @@ function showPhaseInfo(id, e) {
   const info = PHASE_INFO[id];
   let el = document.getElementById('phase-info');
   if (!el) { el = document.createElement('div'); el.id='phase-info'; el.className='phase-info'; document.body.appendChild(el); }
-  el.innerHTML = `<div style="color:${info.color};font-family:'Orbitron',monospace;font-size:9px;letter-spacing:1px;margin-bottom:6px">${info.title}</div><div style="color:var(--text-dim);font-size:12px;line-height:1.6">${info.text}</div>`;
-  el.style.cssText = `display:block;position:fixed;z-index:9999;left:${Math.min(e.clientX,window.innerWidth-220)}px;top:${e.clientY+12}px;width:220px;background:rgba(4,8,24,0.97);border:1px solid ${info.color}44;border-radius:12px;padding:14px 16px;box-shadow:0 0 20px ${info.color}22;pointer-events:none;`;
-  setTimeout(()=>{ if(el) el.style.display='none'; }, 4000);
+  el.innerHTML = `<div style="color:${info.color};font-family:'Orbitron',monospace;font-size:10px;letter-spacing:1px;margin-bottom:8px;font-weight:700">${info.title}</div><div style="color:var(--text);font-size:13px;line-height:1.65">${info.text}</div>`;
+
+  // Position smartly — keep inside viewport
+  const W = window.innerWidth, H = window.innerHeight;
+  const tipW = 240, tipH = 160;
+  let left = e.clientX + 14;
+  let top  = e.clientY + 14;
+  if (left + tipW > W) left = e.clientX - tipW - 8;
+  if (top  + tipH > H) top  = e.clientY - tipH - 8;
+  if (left < 8) left = 8;
+  if (top  < 8) top  = 8;
+
+  el.style.cssText = `display:block;position:fixed;z-index:99999;left:${left}px;top:${top}px;width:${tipW}px;background:rgba(4,8,24,0.98);border:1px solid ${info.color}66;border-radius:12px;padding:16px 18px;box-shadow:0 0 30px ${info.color}33;pointer-events:none;`;
+  
+  clearTimeout(el._timer);
+  el._timer = setTimeout(()=>{ if(el) el.style.display='none'; }, 5000);
   e.stopPropagation();
 }
 document.addEventListener('click',(e)=>{

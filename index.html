@@ -42,7 +42,7 @@ canvas#starfield { position:fixed; inset:0; z-index:0; }
 .nebula-c { width:400px; height:300px; background:radial-gradient(ellipse, rgba(0,191,255,0.08) 0%, transparent 70%); top:40%; left:40%; }
 
 /* JUPITER */
-.jupiter-system { position:fixed; top:32px; right:100px; width:140px; height:140px; z-index:8; }
+.jupiter-system { position:fixed; top:32px; right:60px; width:140px; height:140px; z-index:8; }
 @media (max-width:768px) { .jupiter-system { top:12px; right:8px; transform:scale(0.55); transform-origin:top right; } }
 .orbital-ring { position:absolute; width:180px; height:50px; border:1.5px solid rgba(0,209,140,0.25); border-radius:50%; top:38px; left:-20px; transform:rotateX(65deg); animation:ring-pulse 4s ease-in-out infinite; }
 .orbital-ring-2 { position:absolute; width:200px; height:55px; border:0.5px solid rgba(153,69,255,0.12); border-radius:50%; top:34px; left:-30px; transform:rotateX(65deg); animation:ring-pulse 6s ease-in-out infinite reverse; }
@@ -338,10 +338,9 @@ header { display:flex; align-items:center; justify-content:space-between; flex-s
     <div class="header-right">
       <div class="network-pill"><div class="net-dot"></div>Solana Mainnet</div>
       <div style="display:flex;align-items:center;gap:8px">
-        <span id="wallet-addr" onclick="if(window.__walletConnected) window.disconnectWallet()" style="font-family:'Orbitron',monospace;font-size:8px;color:var(--text-dim);letter-spacing:1px;display:none;padding:6px 10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:8px;cursor:pointer;transition:all 0.2s" onmouseenter="if(window.__walletConnected){this.textContent='Disconnect';this.style.color='#FF6B6B';this.style.borderColor='rgba(255,107,107,0.3)'}" onmouseleave="if(window.__walletConnected){const a=window.solana?.publicKey?.toString();if(a)this.textContent=a.slice(0,4)+'...'+a.slice(-4);this.style.color='';this.style.borderColor='';}"></span>
+        <span id="wallet-addr" onclick="if(window.__walletConnected) window.disconnectWallet()" style="font-family:'Orbitron',monospace;font-size:8px;color:#F0F4FF;letter-spacing:1px;display:none;padding:6px 10px;background:rgba(255,255,255,0.06);border:2px solid rgba(255,255,255,0.4);border-radius:8px;cursor:pointer;transition:all 0.2s" onmouseenter="if(window.__walletConnected){this.textContent='Disconnect';this.style.color='#FF6B6B';this.style.borderColor='rgba(255,107,107,0.3)'}" onmouseleave="if(window.__walletConnected){const a=window.solana?.publicKey?.toString();if(a)this.textContent=a.slice(0,4)+'...'+a.slice(-4);this.style.color='';this.style.borderColor='';}"></span>
         <button class="wallet-btn" id="wbtn" onclick="window.__walletConnected ? window.disconnectWallet() : window.connectWallet()">Connect Wallet</button>
       </div>
-<span id="wallet-addr" style="font-family:'Orbitron',monospace;font-size:8px;color:var(--text-dim);letter-spacing:1px;display:none"></span>
     </div>
   </header>
 
@@ -489,7 +488,7 @@ header { display:flex; align-items:center; justify-content:space-between; flex-s
       <div class="dash-card green"><img src="https://cdn.jsdelivr.net/gh/solana-labs/token-list@main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png" style="width:28px;height:28px;border-radius:50%;margin-bottom:8px;display:block"><span class="dc-label">SOL Balance</span><span class="dc-val" id="d-sol" style="color:var(--sol-green)">—</span><span class="dc-sub" id="d-sol-usd">Connect wallet</span></div>
       <div class="dash-card purple"><img src="https://cdn.jsdelivr.net/gh/solana-labs/token-list@main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png" style="width:28px;height:28px;border-radius:50%;margin-bottom:8px;display:block"><span class="dc-label">USDC Balance</span><span class="dc-val" id="d-usdc" style="color:var(--sol-purple)">—</span><span class="dc-sub">Available to DCA</span></div>
       <div class="dash-card yellow"><span class="dc-icon">🌑</span><span class="dc-label">Active DCA Orders</span><span class="dc-val" id="d-orders" style="color:#FFD966">—</span><span class="dc-sub">Via Jupiter DCA</span></div>
-      <div class="dash-card blue"><span class="dc-icon">🌊</span><span class="dc-label">JLP Yield APY</span><span class="dc-val" id="d-apy" style="color:#00BFFF">~15%</span><span class="dc-sub">Jupiter Liquidity Pool</span></div>
+      <div class="dash-card blue"><img src="/jlp.png" style="width:28px;height:28px;border-radius:50%;margin-bottom:8px;display:block"><span class="dc-label">JLP Yield APY</span><span class="dc-val" id="d-apy" style="color:#00BFFF">15%</span><span class="dc-sub">Jupiter Liquidity Pool</span></div>
       <div class="dash-card" style="border:1px solid rgba(0,209,140,0.15)"><span class="dc-icon">J</span><span class="dc-label">JLP Staked</span><span class="dc-val" id="d-jlp-bal" style="color:var(--jup-green)">—</span><span class="dc-sub" id="d-jlp-usd">Connect wallet</span></div>
     </div>
     <div class="dash-two-col">

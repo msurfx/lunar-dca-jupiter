@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MoonSurfer — Lunar DCA on Solana</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%23111830' stroke='%239945FF' stroke-width='3'/><circle cx='50' cy='42' r='22' fill='%231A2545' stroke='%239945FF' stroke-width='2'/><path d='M38 38 Q50 30 62 38 Q62 48 50 51 Q38 48 38 38Z' fill='rgba(20,241,149,0.3)'/><line x1='50' y1='20' x2='53' y2='13' stroke='%239945FF' stroke-width='2'/><circle cx='53' cy='12' r='3' fill='%239945FF'/><path d='M25 70 Q50 63 75 70 Q73 78 50 80 Q27 78 25 70Z' fill='%230D1835' stroke='%2314F195' stroke-width='1.5'/><circle cx='20' cy='72' r='3' fill='%2314F195' opacity='0.8'/><circle cx='80' cy='72' r='3' fill='%2314F195' opacity='0.8'/></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;900&family=Rajdhani:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -15,8 +16,8 @@
   --jup-green: #00D18C;
   --moon-silver: #C8D4E8;
   --star: #6678AA;
-  --text: #E0E8FF;
-  --text-dim: #8A9BB8;
+  --text: #F0F4FF;
+  --text-dim: #AAB8D0;
   --phase-new: #14F195;
   --phase-wax: #9945FF;
   --phase-full: #FFD966;
@@ -69,17 +70,17 @@ canvas#starfield { position:fixed; inset:0; z-index:0; }
 header { display:flex; align-items:center; justify-content:space-between; flex-shrink:0; }
 .wordmark { display:flex; align-items:baseline; gap:10px; }
 .logo-text { font-family:'Orbitron',monospace; font-size:24px; font-weight:900; letter-spacing:3px; background:linear-gradient(135deg, var(--sol-green) 0%, var(--sol-purple) 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-.logo-tag { font-size:11px; color:var(--text-dim); letter-spacing:3px; text-transform:uppercase; }
+.logo-tag { font-size:10px; color:var(--text-dim); letter-spacing:2px; text-transform:uppercase; white-space:nowrap; }
 .header-center { display:flex; gap:8px; align-items:center; }
 .header-right { display:flex; align-items:center; gap:12px; }
-.network-pill { display:flex; align-items:center; gap:6px; padding:6px 12px; background:rgba(20,241,149,0.06); border:1px solid rgba(20,241,149,0.15); border-radius:20px; font-size:11px; font-weight:600; color:var(--sol-green); letter-spacing:1px; }
+.network-pill { display:flex; align-items:center; gap:6px; padding:6px 12px; background:rgba(20,241,149,0.06); border:1px solid rgba(20,241,149,0.15); border-radius:20px; font-size:12px; font-weight:600; color:var(--sol-green); letter-spacing:1px; }
 .net-dot { width:6px; height:6px; border-radius:50%; background:var(--sol-green); animation:blink 2s ease-in-out infinite; }
 @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
 .wallet-btn { padding:8px 18px; background:rgba(153,69,255,0.1); border:1px solid rgba(153,69,255,0.3); border-radius:10px; color:var(--sol-purple); font-family:'Orbitron',monospace; font-size:9px; letter-spacing:2px; cursor:pointer; transition:all 0.3s; }
 .wallet-btn:hover { background:rgba(153,69,255,0.2); border-color:rgba(153,69,255,0.5); box-shadow:0 0 16px rgba(153,69,255,0.2); }
 
 /* TABS */
-.tab-btn { padding:7px 16px; background:transparent; border:1.5px solid rgba(255,255,255,0.15); border-radius:10px; color:var(--text-dim); font-family:'Orbitron',monospace; font-size:8px; font-weight:600; letter-spacing:2px; cursor:pointer; transition:all 0.3s; }
+.tab-btn { padding:7px 16px; background:transparent; border:1.5px solid rgba(255,255,255,0.15); border-radius:10px; color:var(--text-dim); font-family:'Orbitron',monospace; font-size:11px; font-weight:700; letter-spacing:2px; cursor:pointer; transition:all 0.3s; }
 .tab-btn.active { background:rgba(153,69,255,0.18); border:2px solid var(--sol-purple); color:var(--sol-purple); box-shadow:0 0 12px rgba(153,69,255,0.2); }
 .tab-btn:hover:not(.active) { border-color:rgba(255,255,255,0.3); color:var(--text); }
 
@@ -101,7 +102,7 @@ header { display:flex; align-items:center; justify-content:space-between; flex-s
 .panel-moon::before { content:''; position:absolute; top:-40px; left:-40px; width:200px; height:200px; background:radial-gradient(circle, rgba(153,69,255,0.08) 0%, transparent 70%); pointer-events:none; }
 .panel-dca { border:1px solid rgba(20,241,149,0.12); gap:12px; overflow:visible; }
 .panel-dca::before { content:''; position:absolute; bottom:-40px; right:-40px; width:200px; height:200px; background:radial-gradient(circle, rgba(20,241,149,0.06) 0%, transparent 70%); pointer-events:none; }
-.panel-title { font-family:'Orbitron',monospace; font-size:9px; letter-spacing:4px; color:var(--text-dim); text-transform:uppercase; margin-bottom:14px; text-align:center; }
+.panel-title { font-family:'Orbitron',monospace; font-size:11px; letter-spacing:3px; color:var(--text-dim); text-transform:uppercase; margin-bottom:14px; text-align:center; }
 
 /* MOON DIAL */
 .dial-wrap { position:relative; width:230px; height:230px; }
@@ -130,14 +131,14 @@ header { display:flex; align-items:center; justify-content:space-between; flex-s
 .phase-chip:hover { transform:scale(1.08) !important; }
 .phase-info { display:none; position:fixed; z-index:300; background:rgba(4,8,24,0.97); border:1px solid rgba(153,69,255,0.3); border-radius:12px; padding:12px 16px; width:200px; font-size:12px; line-height:1.6; box-shadow:0 0 20px rgba(153,69,255,0.15); pointer-events:none; }
 .phase-info.show { display:block; }
-.chip-name { font-size:9px; color:var(--text-dim); display:block; margin-top:2px; }
-.chip-act { font-size:8px; font-weight:700; display:block; margin-top:1px; letter-spacing:0.5px; }
+.chip-name { font-size:11px; color:var(--text-dim); display:block; margin-top:2px; }
+.chip-act { font-size:10px; font-weight:700; display:block; margin-top:1px; letter-spacing:0.5px; }
 .token-row { display:flex; align-items:center; justify-content:space-between; padding:10px 14px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); border-radius:10px; }
 .tok { display:flex; align-items:center; gap:8px; font-family:'Orbitron',monospace; font-size:13px; font-weight:700; }
 .tok-img { width:26px; height:26px; border-radius:50%; object-fit:cover; }
 .arrow-mid { color:var(--text-dim); font-size:14px; }
 .field-group { display:flex; flex-direction:column; gap:5px; }
-.field-label { font-size:10px; color:var(--text-dim); letter-spacing:2px; text-transform:uppercase; }
+.field-label { font-size:12px; color:var(--text-dim); letter-spacing:1px; text-transform:uppercase; }
 .field-input { background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:10px; padding:10px 14px; color:var(--text); font-family:'Rajdhani',sans-serif; font-size:15px; outline:none; width:100%; transition:border-color 0.3s; }
 .field-input:focus { border-color:rgba(153,69,255,0.5); }
 .jlp-row { display:flex; align-items:center; justify-content:space-between; padding:10px 14px; background:rgba(0,209,140,0.04); border:1px solid rgba(0,209,140,0.12); border-radius:10px; }
@@ -195,12 +196,12 @@ header { display:flex; align-items:center; justify-content:space-between; flex-s
 .dash-card.yellow::before { background:radial-gradient(circle, rgba(255,217,102,0.08) 0%, transparent 70%); }
 .dash-card.blue::before { background:radial-gradient(circle, rgba(0,191,255,0.08) 0%, transparent 70%); }
 .dc-icon { font-size:20px; display:block; margin-bottom:8px; }
-.dc-label { font-family:'Orbitron',monospace; font-size:8px; letter-spacing:2px; color:var(--text-dim); text-transform:uppercase; display:block; margin-bottom:6px; }
+.dc-label { font-family:'Orbitron',monospace; font-size:10px; letter-spacing:2px; color:var(--text-dim); text-transform:uppercase; display:block; margin-bottom:6px; }
 .dc-val { font-family:'Orbitron',monospace; font-size:22px; font-weight:900; display:block; line-height:1; }
 .dc-sub { font-size:11px; color:var(--text-dim); display:block; margin-top:4px; }
 .dash-wide { background:rgba(8,15,34,0.75); border-radius:16px; padding:18px 22px; backdrop-filter:blur(12px); border:1px solid rgba(255,255,255,0.06); }
 .dash-two-col { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-.dash-section-title { font-family:'Orbitron',monospace; font-size:8px; letter-spacing:3px; color:var(--text-dim); text-transform:uppercase; margin-bottom:14px; }
+.dash-section-title { font-family:'Orbitron',monospace; font-size:11px; letter-spacing:2px; color:var(--text-dim); text-transform:uppercase; margin-bottom:14px; }
 .price-row { display:flex; align-items:center; justify-content:space-between; padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.04); }
 .price-row:last-child { border-bottom:none; }
 .price-name { display:flex; align-items:center; gap:10px; font-size:14px; font-weight:600; }
@@ -245,7 +246,7 @@ header { display:flex; align-items:center; justify-content:space-between; flex-s
 /* MOBILE BOTTOM NAV */
 .mob-nav { display:none; position:fixed; bottom:0; left:0; right:0; background:rgba(4,8,24,0.96); border-top:1px solid rgba(153,69,255,0.2); backdrop-filter:blur(16px); z-index:100; padding:8px 0 max(8px, env(safe-area-inset-bottom)); }
 .mob-nav-inner { display:flex; }
-.mob-tab { flex:1; background:transparent; border:none; border-top:2px solid transparent; padding:8px 4px; display:flex; flex-direction:column; align-items:center; gap:3px; color:var(--text-dim); font-family:'Orbitron',monospace; font-size:7px; letter-spacing:1px; cursor:pointer; transition:all 0.2s; }
+.mob-tab { flex:1; background:transparent; border:none; border-top:2px solid transparent; padding:8px 4px; display:flex; flex-direction:column; align-items:center; gap:3px; color:var(--text-dim); font-family:'Orbitron',monospace; font-size:10px; letter-spacing:1px; cursor:pointer; transition:all 0.2s; }
 .mob-tab.active { border-top-color:var(--sol-purple); color:var(--sol-purple); }
 .mob-tab-icon { font-size:18px; }
 
@@ -275,7 +276,7 @@ header { display:flex; align-items:center; justify-content:space-between; flex-s
 @media (max-width:480px) {
   .dial-wrap { width:160px; height:160px; }
   .phases-grid { grid-template-columns:repeat(2,1fr); }
-  .moonsurfer-wrap { display:none; }
+  .moonsurfer-wrap { transform:scale(0.7); bottom:110px; }
 }
 
 @media (max-width:768px) and (orientation:landscape) {
@@ -324,6 +325,7 @@ header { display:flex; align-items:center; justify-content:space-between; flex-s
   <!-- HEADER -->
   <header>
     <div class="wordmark">
+      <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%23111830' stroke='%239945FF' stroke-width='3'/><circle cx='50' cy='42' r='22' fill='%231A2545' stroke='%239945FF' stroke-width='2'/><path d='M38 38 Q50 30 62 38 Q62 48 50 51 Q38 48 38 38Z' fill='rgba(20,241,149,0.3)'/><line x1='50' y1='20' x2='53' y2='13' stroke='%239945FF' stroke-width='2'/><circle cx='53' cy='12' r='3' fill='%239945FF'/><path d='M25 70 Q50 63 75 70 Q73 78 50 80 Q27 78 25 70Z' fill='%230D1835' stroke='%2314F195' stroke-width='1.5'/><circle cx='20' cy='72' r='3' fill='%2314F195' opacity='0.8'/><circle cx='80' cy='72' r='3' fill='%2314F195' opacity='0.8'/></svg>" style="width:38px;height:38px;border-radius:50%;flex-shrink:0" alt="MoonSurfer">
       <div class="logo-text">MOONSURFER</div>
       <div class="logo-tag">Lunar DCA on Solana</div>
     </div>
@@ -514,6 +516,17 @@ header { display:flex; align-items:center; justify-content:space-between; flex-s
         <div class="price-row"><span style="font-size:13px;color:var(--text-dim)">Current Phase</span><span style="font-size:13px;font-weight:600" id="d-cur-phase">—</span></div>
         <div class="price-row"><span style="font-size:13px;color:var(--text-dim)">Cycle Day</span><span style="font-size:13px;font-weight:600;color:var(--sol-green)" id="d-cycle-day">—</span></div>
         <div class="price-row"><span style="font-size:13px;color:var(--text-dim)">Current Action</span><span style="font-size:13px;font-weight:600" id="d-action-2">—</span></div>
+        <div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.06)">
+          <div style="font-family:'Orbitron',monospace;font-size:8px;letter-spacing:2px;color:var(--text-dim);margin-bottom:10px">THIS CYCLE SCHEDULE</div>
+          <div class="price-row"><span style="font-size:12px;color:#14F195">🌑 Full Buy</span><span style="font-size:12px;font-weight:600;color:var(--text-dim)" id="sched-new">—</span></div>
+          <div class="price-row"><span style="font-size:12px;color:#9945FF">🌓 50% Buy</span><span style="font-size:12px;font-weight:600;color:var(--text-dim)" id="sched-wax">—</span></div>
+          <div class="price-row"><span style="font-size:12px;color:#FFD966">🌕 Pause</span><span style="font-size:12px;font-weight:600;color:var(--text-dim)" id="sched-full">—</span></div>
+          <div class="price-row"><span style="font-size:12px;color:#00BFFF">🌗 JLP Yield</span><span style="font-size:12px;font-weight:600;color:var(--text-dim)" id="sched-wan">—</span></div>
+          <div style="margin-top:8px;padding:8px 10px;background:rgba(20,241,149,0.06);border:1px solid rgba(20,241,149,0.15);border-radius:8px;display:flex;justify-content:space-between;align-items:center">
+            <span style="font-size:12px;color:#14F195;font-weight:600">🌑 Next New Moon</span>
+            <span style="font-size:12px;font-weight:700;color:#14F195" id="sched-next">—</span>
+          </div>
+        </div>
       </div>
     </div>
     <div class="dash-wide">
@@ -807,6 +820,35 @@ function updateDashboard() {
   const cp=document.getElementById('d-cur-phase');if(cp){cp.textContent=phase.emoji+' '+phase.name;cp.style.color=phase.color;}
   const cd=document.getElementById('d-cycle-day');if(cd)cd.textContent=day.toFixed(1)+' / 29.5';
   const a2=document.getElementById('d-action-2');if(a2){a2.textContent=phase.action;a2.style.color=phase.color;}
+
+  // Calculate exact dates for each phase in the current/next cycle
+  const now = Date.now();
+  const msPerDay = 86400000;
+  const SYNODIC_MS = SYNODIC * msPerDay;
+
+  // Start of current cycle (last new moon)
+  const cycleStart = now - (day * msPerDay);
+
+  const fmt = (ms) => new Date(ms).toLocaleDateString('en-GB', { day:'numeric', month:'short' });
+
+  // Phase windows
+  const newMoonStart  = cycleStart;
+  const newMoonEnd    = cycleStart + (SYNODIC * 0.125 * msPerDay);
+  const waxStart      = newMoonEnd;
+  const waxEnd        = cycleStart + (SYNODIC * 0.50  * msPerDay);
+  const fullStart     = waxEnd;
+  const fullEnd       = cycleStart + (SYNODIC * 0.625 * msPerDay);
+  const wanStart      = fullEnd;
+  const wanEnd        = cycleStart + SYNODIC_MS;
+  const nextNewMoon   = cycleStart + SYNODIC_MS;
+  const nextNewMoonEnd = nextNewMoon + (SYNODIC * 0.125 * msPerDay);
+
+  const s1=document.getElementById('sched-new');   if(s1) s1.textContent=fmt(newMoonStart)+' – '+fmt(newMoonEnd);
+  const s2=document.getElementById('sched-wax');   if(s2) s2.textContent=fmt(waxStart)+' – '+fmt(waxEnd);
+  const s3=document.getElementById('sched-full');  if(s3) s3.textContent=fmt(fullStart)+' – '+fmt(fullEnd);
+  const s4=document.getElementById('sched-wan');   if(s4) s4.textContent=fmt(wanStart)+' – '+fmt(wanEnd);
+  const s5=document.getElementById('sched-next');  if(s5) s5.textContent=fmt(nextNewMoon)+' – '+fmt(nextNewMoonEnd);
+
   fetchPrices();
 }
 

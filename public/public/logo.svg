@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 680">
+<defs>
+  <radialGradient id="bg3" cx="50%" cy="50%" r="50%">
+    <stop offset="0%" stop-color="#111830"/>
+    <stop offset="100%" stop-color="#060C1A"/>
+  </radialGradient>
+</defs>
+<circle cx="340" cy="340" r="330" fill="url(#bg3)"/>
+<circle cx="340" cy="340" r="330" fill="none" stroke="#9945FF" stroke-width="2.5" opacity="0.7"/>
+<circle cx="340" cy="340" r="318" fill="none" stroke="#14F195" stroke-width="1" opacity="0.25"/>
+<circle cx="340" cy="295" r="200" fill="#C8D4E8" opacity="0.07"/>
+<circle cx="340" cy="295" r="175" fill="#C8D4E8" opacity="0.08"/>
+<circle cx="340" cy="295" r="200" fill="none" stroke="#C8D4E8" stroke-width="1.5" opacity="0.18"/>
+<circle cx="385" cy="280" r="185" fill="#060C1A" opacity="0.55"/>
+<circle cx="270" cy="255" r="12" fill="none" stroke="rgba(200,212,232,0.12)" stroke-width="1.5"/>
+<circle cx="295" cy="305" r="7" fill="none" stroke="rgba(200,212,232,0.1)" stroke-width="1"/>
+<circle cx="110" cy="130" r="2.5" fill="#F0F4FF" opacity="0.7"/>
+<circle cx="570" cy="110" r="2" fill="#F0F4FF" opacity="0.7"/>
+<circle cx="130" cy="240" r="1.5" fill="#F0F4FF" opacity="0.6"/>
+<circle cx="590" cy="220" r="2" fill="#F0F4FF" opacity="0.6"/>
+<circle cx="430" cy="90" r="1.5" fill="#F0F4FF" opacity="0.5"/>
+<path d="M190 448 Q340 428 490 448 Q482 468 340 474 Q198 468 190 448Z" fill="#0D1835" stroke="#14F195" stroke-width="2"/>
+<ellipse cx="340" cy="448" rx="130" ry="10" fill="none" stroke="#14F195" stroke-width="1" opacity="0.4"/>
+<rect x="324" y="340" width="32" height="58" rx="12" fill="#1A2545" stroke="#9945FF" stroke-width="2"/>
+<rect x="324" y="340" width="16" height="58" rx="12" fill="rgba(153,69,255,0.25)"/>
+<circle cx="340" cy="316" r="34" fill="#1A2545" stroke="#9945FF" stroke-width="2.5"/>
+<path d="M318 310 Q340 296 362 310 Q362 325 340 329 Q318 325 318 310Z" fill="rgba(20,241,149,0.18)" stroke="rgba(20,241,149,0.5)" stroke-width="1"/>
+<ellipse cx="328" cy="304" rx="10" ry="6" fill="rgba(255,255,255,0.18)" transform="rotate(-20,328,304)"/>
+<line x1="340" y1="282" x2="347" y2="264" stroke="#9945FF" stroke-width="3" stroke-linecap="round"/>
+<circle cx="347" cy="261" r="6" fill="#9945FF"/>
+<circle cx="347" cy="261" r="3" fill="#C8A0FF"/>
+<path d="M324 354 Q306 362 296 370" fill="none" stroke="#1A2545" stroke-width="12" stroke-linecap="round"/>
+<circle cx="294" cy="371" r="10" fill="#14F195" opacity="0.9"/>
+<path d="M356 352 Q374 345 384 336" fill="none" stroke="#1A2545" stroke-width="12" stroke-linecap="round"/>
+<circle cx="385" cy="334" r="10" fill="#14F195" opacity="0.9"/>
+<path d="M332 398 Q322 416 318 430" fill="none" stroke="#1A2545" stroke-width="12" stroke-linecap="round"/>
+<path d="M348 398 Q358 416 362 430" fill="none" stroke="#1A2545" stroke-width="12" stroke-linecap="round"/>
+<circle cx="168" cy="452" r="5" fill="#14F195" opacity="0.55"/>
+<circle cx="150" cy="442" r="3.5" fill="#9945FF" opacity="0.6"/>
+<circle cx="512" cy="452" r="5" fill="#14F195" opacity="0.55"/>
+<circle cx="530" cy="440" r="3.5" fill="#9945FF" opacity="0.6"/>
+</svg>

@@ -171,6 +171,17 @@ header { display:flex; align-items:center; justify-content:space-between; flex-s
 .moonsurfer-wrap { position:fixed; bottom:90px; z-index:7; pointer-events:none; animation:ms-cruise 28s linear infinite; }
 @keyframes ms-cruise { 0%{left:-160px} 100%{left:calc(100vw + 80px)} }
 
+.jupcat-wrap { position:fixed; z-index:7; pointer-events:none; animation:jupcat-float 45s linear infinite; }
+@keyframes jupcat-float {
+  0%   { right:-180px; bottom:15%; transform:scale(0.45) rotate(-5deg); opacity:0; }
+  5%   { opacity:0.9; }
+  30%  { right:40%; bottom:28%; transform:scale(0.28) rotate(8deg); opacity:0.7; }
+  60%  { right:70%; bottom:45%; transform:scale(0.14) rotate(-3deg); opacity:0.4; }
+  85%  { right:95%; bottom:60%; transform:scale(0.06) rotate(5deg); opacity:0.15; }
+  95%  { opacity:0; }
+  100% { right:115%; bottom:65%; transform:scale(0.03) rotate(5deg); opacity:0; }
+}
+
 /* MID-CYCLE MODAL */
 .overlay { display:none; position:fixed; inset:0; background:rgba(4,8,24,0.88); z-index:200; align-items:center; justify-content:center; backdrop-filter:blur(6px); }
 .overlay.visible { display:flex; }
@@ -307,6 +318,9 @@ header { display:flex; align-items:center; justify-content:space-between; flex-s
 </div>
 
 <div class="moonsurfer-wrap" id="ms"></div>
+<div class="jupcat-wrap">
+  <img src="/jup-cat.png" style="width:180px;height:180px;object-fit:contain" alt="Jupiter Cat">
+</div>
 
 <div class="overlay" id="overlay">
   <div class="modal-card">
@@ -472,8 +486,16 @@ header { display:flex; align-items:center; justify-content:space-between; flex-s
 
     </div>
 
-    <!-- Cosmic Confidence -->
-    <div class="conf-panel">
+   <!-- Powered by Jupiter -->
+   <div style="text-align:center;padding:6px 0;flex-shrink:0">
+    <span style="display:inline-flex;align-items:center;gap:6px;opacity:0.6;transition:opacity 0.2s" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.6'">
+      <img src="/powered-by-jupiter.svg" style="height:24px;filter:brightness(2)" alt="Jupiter">
+      <span style="font-family:'Rajdhani',sans-serif;font-size:12px;color:#AAB8D0;letter-spacing:1px">Powered by Jupiter</span>
+    </span>
+  </div>
+
+  <!-- Cosmic Confidence -->
+  <div class="conf-panel">
       <div><div class="conf-label" style="cursor:pointer" onclick="showConfInfo()">Cosmic Confidence ⓘ</div><div class="conf-stars" id="c-stars">★★★★☆</div></div>
       <div class="conf-track"><div class="conf-fill" id="c-fill" style="width:72%"></div></div>
       <div><div class="conf-score" id="c-score" style="color:var(--sol-green)">72</div><div class="conf-denom">/ 100</div></div>
@@ -576,6 +598,11 @@ header { display:flex; align-items:center; justify-content:space-between; flex-s
     </div>
   </div>
 
+</div>
+
+<!-- POWERED BY JUPITER -->
+<div style="text-align:center;padding:10px 0 6px;flex-shrink:0">
+  <img src="/powered-by-jupiter.svg" style="height:22px;opacity:0.7;transition:opacity 0.2s" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'" alt="Powered by Jupiter">
 </div>
 
 <!-- MOBILE BOTTOM NAV -->

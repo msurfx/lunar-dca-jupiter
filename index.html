@@ -488,7 +488,7 @@ header { display:flex; align-items:center; justify-content:space-between; flex-s
       <div class="dash-card green"><img src="https://cdn.jsdelivr.net/gh/solana-labs/token-list@main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png" style="width:28px;height:28px;border-radius:50%;margin-bottom:8px;display:block"><span class="dc-label">SOL Balance</span><span class="dc-val" id="d-sol" style="color:var(--sol-green)">—</span><span class="dc-sub" id="d-sol-usd">Connect wallet</span></div>
       <div class="dash-card purple"><img src="https://cdn.jsdelivr.net/gh/solana-labs/token-list@main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png" style="width:28px;height:28px;border-radius:50%;margin-bottom:8px;display:block"><span class="dc-label">USDC Balance</span><span class="dc-val" id="d-usdc" style="color:var(--sol-purple)">—</span><span class="dc-sub">Available to DCA</span></div>
       <div class="dash-card yellow"><span class="dc-icon">🌑</span><span class="dc-label">Active DCA Orders</span><span class="dc-val" id="d-orders" style="color:#FFD966">—</span><span class="dc-sub">Via Jupiter DCA</span></div>
-      <div class="dash-card blue"><img src="/jlp.png" style="width:28px;height:28px;border-radius:50%;margin-bottom:8px;display:block"><span class="dc-label">JLP Yield APY</span><span class="dc-val" id="d-apy" style="color:#00BFFF">15%</span><span class="dc-sub">Jupiter Liquidity Pool</span></div>
+      <div class="dash-card blue"><img src="/jlp.svg" style="width:28px;height:28px;border-radius:50%;margin-bottom:8px;display:block"><span class="dc-label">JLP Yield APY</span><span class="dc-val" id="d-apy" style="color:#00BFFF">15%</span><span class="dc-sub">Jupiter Liquidity Pool</span></div>
       <div class="dash-card" style="border:1px solid rgba(0,209,140,0.15)"><span class="dc-icon">J</span><span class="dc-label">JLP Staked</span><span class="dc-val" id="d-jlp-bal" style="color:var(--jup-green)">—</span><span class="dc-sub" id="d-jlp-usd">Connect wallet</span></div>
     </div>
     <div class="dash-two-col">
@@ -754,7 +754,7 @@ function fetchTokenIcons() {
   ['jlp-icon-ps', 'jlp-icon-dash'].forEach(id => {
     const img = document.getElementById(id);
     if (!img) return;
-    img.src = '/jlp.png';
+    img.src = '/jlp.svg';
     img.style.display = 'block';
     const fb = document.getElementById(id === 'jlp-icon-ps' ? 'jlp-fallback-ps' : 'jlp-fallback-dash');
     if (fb) fb.style.display = 'none';

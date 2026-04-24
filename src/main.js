@@ -1,6 +1,6 @@
 import { connectWallet, disconnectWallet, tryAutoConnect, walletPublicKey, fetchWalletBalances, setLastJLPPrice } from "./wallet.js";
 import { launchDCAOrder, fetchDCAOrders, closeDCA } from "./dca.js";
-import { swapUSDCtoJLP, getJLPApy } from "./jlp.js";
+import { swapUSDCtoJLP, depositToJupUSD, withdrawFromJupUSD, swapJupUSDtoJLP, getJLPApy } from "./jlp.js";
 
 // ── Wallet ──────────────────────────────────────────────────────────────────
 window.connectWallet = connectWallet;
@@ -39,41 +39,48 @@ window.launchDCA = async () => {
     return;
   }
 
- // Full moon → sell SOL → USDC
- if (phase.id === 'full') {
-  setBtn(btn, "🌕 Selling SOL...", 0.7);
+// Full moon → deposit USDC into jupUSD on Jupiter Lend
+if (phase.id === 'full' && jlpEnabled) {
+  setBtn(btn, "🌕 Depositing to jupUSD...", 0.7);
   try {
-    const solText = document.getElementById('d-sol')?.textContent;
-    const solBalance = parseFloat(solText) || 0;
-    const sellAmt = solBalance > 0.01 ? +(solBalance * 0.95).toFixed(6) : 0.001;
-      const sig = await swapSOLtoUSDC(sellAmt);
-      setBtn(btn, "✓ SOL Sold → USDC", 1, "linear-gradient(135deg,#FFD966,#CC9900)");
-      console.log("[SELL] tx:", sig);
-      resetBtn(btn, 5000);
-      refreshDCAOrders();
-    } catch (err) {
-      resetBtn(btn, 0);
-      console.error("[SELL] failed:", err);
-      alert("Sell failed: " + err.message);
-    }
-    return;
+    const sig = await depositToJupUSD(amountUsdc);
+    setBtn(btn, "✓ Earning in jupUSD", 1, "linear-gradient(135deg,#FFD966,#CC9900)");
+    console.log("[jupUSD] tx:", sig);
+    resetBtn(btn, 5000);
+  } catch (err) {
+    resetBtn(btn, 0);
+    console.error("[jupUSD] failed:", err);
+    alert("jupUSD deposit failed: " + err.message);
   }
+  return;
+}
 
-  // Waning with JLP enabled → park in JLP
-  if (phase.id === 'wan' && jlpEnabled) {
-    setBtn(btn, "☽ Parking in JLP...", 0.7);
+// Waning → withdraw jupUSD then swap to JLP
+if (phase.id === 'wan' && jlpEnabled) {
+  setBtn(btn, "🌗 Moving to JLP...", 0.7);
+  try {
+    // Step 1 — withdraw from jupUSD
+    await withdrawFromJupUSD(amountUsdc);
+    // Step 2 — swap jupUSD → JLP
+    const sig = await swapJupUSDtoJLP(amountUsdc);
+    setBtn(btn, "✓ JLP Position Open", 1, "linear-gradient(135deg,#00A870,#006B50)");
+    console.log("[JLP] tx:", sig);
+    resetBtn(btn, 5000);
+  } catch (err) {
+    // Fallback — if no jupUSD position, swap USDC directly to JLP
     try {
       const sig = await swapUSDCtoJLP(amountUsdc);
       setBtn(btn, "✓ JLP Position Open", 1, "linear-gradient(135deg,#00A870,#006B50)");
-      console.log("[JLP] tx:", sig);
+      console.log("[JLP fallback] tx:", sig);
       resetBtn(btn, 5000);
-    } catch (err) {
+    } catch (err2) {
       resetBtn(btn, 0);
-      console.error("[JLP] failed:", err);
-      alert("JLP swap failed: " + err.message);
+      console.error("[JLP] failed:", err2);
+      alert("JLP swap failed: " + err2.message);
     }
-    return;
   }
+  return;
+}
 
   // New moon (100%) or waxing (50%) → DCA into SOL
   setBtn(btn, "🚀 Launching...", 0.7);

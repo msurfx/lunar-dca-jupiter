@@ -456,7 +456,7 @@ header { display:flex; align-items:center; justify-content:space-between; flex-s
         <div class="phases-grid">
           <div class="phase-chip" id="chip-new" onclick="window.showPhaseInfo('new',event)"><span class="chip-icon">🌑</span><span class="chip-name">New Moon</span><span class="chip-act" style="color:#14F195">100% Buy</span></div>
           <div class="phase-chip" id="chip-wax" onclick="window.showPhaseInfo('wax',event)"><span class="chip-icon">🌓</span><span class="chip-name">Waxing</span><span class="chip-act" style="color:#9945FF">50% Buy</span></div>
-          <div class="phase-chip" id="chip-full" onclick="window.showPhaseInfo('full',event)"><span class="chip-icon">🌕</span><span class="chip-name">Full Moon</span><span class="chip-act" style="color:#FFD966">Pause</span></div>
+          <div class="phase-chip" id="chip-full" onclick="window.showPhaseInfo('full',event)"><span class="chip-icon">🌕</span><span class="chip-name">Full Moon</span><span class="chip-act" style="color:#FFD966">jupUSD Yield</span></div>
           <div class="phase-chip" id="chip-wan" onclick="window.showPhaseInfo('wan',event)"><span class="chip-icon">🌗</span><span class="chip-name">Waning</span><span class="chip-act" style="color:#00BFFF">JLP Yield</span></div>
         </div>
         <div class="phase-info" id="phase-info"></div>
@@ -947,7 +947,7 @@ async function drawChart() {
 const PHASE_INFO = {
   new: {color:'#14F195', title:'New Moon — Full Buy 🌑', text:'Prime accumulation window. MoonSurfer executes your full DCA amount in USDC→SOL. Historically the strongest 7-day period. Used as a timing signal by institutional traders.'},
   wax: {color:'#9945FF', title:'Waxing Phase — Light Buy 🌓', text:'Market building momentum. MoonSurfer executes 50% of your set DCA amount. Lighter position sizing reflects the transitional phase.'},
-  full: {color:'#FFD966', title:'Full Moon — Pause 🌕', text:'Historically volatile. No DCA executed. MoonSurfer waits and observes. Your USDC stays in your wallet ready for the next cycle.'},
+  full: {color:'#FFD966', title:'Full Moon — jupUSD Yield 🌕', text:'Historically volatile. No DCA executed. Instead, idle USDC is deposited into jupUSD on Jupiter Lend earning ~5.6% APY while waiting for the next new moon.'},
   wan: {color:'#00BFFF', title:'Waning Phase — JLP Yield 🌗', text:'No DCA buy. Idle USDC is deposited into Jupiter Liquidity Pool (JLP) to earn yield from perpetuals trading fees (~15% APY) while waiting for the next new moon.'},
 };
 

@@ -4,6 +4,7 @@ import { jupiterFetch, withRetry } from "./jupiter.js";
 
 const USDC_MINT = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
 const JLP_MINT  = "27G8MtK7VtTcCHkpASjSDdkWWYfoqT6ggEuKidVJidD4";
+const JUPUSD_MINT = "JuprjznTrTSp2UFa3ZBUFgwdAmtZCq4MQCwysN55USD";
 
 /**
  * Swap USDC → JLP via Jupiter Swap v2 (order → sign → execute).
@@ -118,6 +119,73 @@ export async function swapSOLtoUSDC(amountSol) {
   }
 
   console.log(`[SELL] swapped ${amountSol} SOL → USDC  sig:`, result.signature);
+  return result.signature;
+}
+
+export async function depositToJupUSD(amountUsdc) {
+  if (!walletPublicKey) throw new Error("Wallet not connected");
+  if (isSimulation) {
+    await new Promise((r) => setTimeout(r, 1200));
+    return "SIM" + Math.random().toString(36).slice(2, 10).toUpperCase();
+  }
+  const amountRaw = Math.round(amountUsdc * 1_000_000);
+  const JUP_KEY = window.__JUP_KEY__ || '';
+  const res = await withRetry(() =>
+    fetch('https://api.jup.ag/lend/v1/earn/deposit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-api-key': JUP_KEY },
+      body: JSON.stringify({ asset: USDC_MINT, amount: amountRaw.toString(), signer: walletPublicKey.toBase58() })
+    }).then(r => r.json())
+  );
+  if (!res.transaction) throw new Error(`jupUSD deposit failed: ${res.error ?? 'no transaction'}`);
+  const tx = VersionedTransaction.deserialize(Buffer.from(res.transaction, 'base64'));
+  const signed = await window.solana.signTransaction(tx);
+  const { connection } = await import('./wallet.js');
+  const sig = await connection.sendRawTransaction(signed.serialize(), { skipPreflight: false });
+  console.log(`[jupUSD] deposited ${amountUsdc} USDC sig:`, sig);
+  return sig;
+}
+
+export async function withdrawFromJupUSD(amountUsdc) {
+  if (!walletPublicKey) throw new Error("Wallet not connected");
+  if (isSimulation) {
+    await new Promise((r) => setTimeout(r, 1200));
+    return "SIM" + Math.random().toString(36).slice(2, 10).toUpperCase();
+  }
+  const amountRaw = Math.round(amountUsdc * 1_000_000);
+  const JUP_KEY = window.__JUP_KEY__ || '';
+  const res = await withRetry(() =>
+    fetch('https://api.jup.ag/lend/v1/earn/withdraw', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-api-key': JUP_KEY },
+      body: JSON.stringify({ asset: USDC_MINT, amount: amountRaw.toString(), signer: walletPublicKey.toBase58() })
+    }).then(r => r.json())
+  );
+  if (!res.transaction) throw new Error(`jupUSD withdraw failed: ${res.error ?? 'no transaction'}`);
+  const tx = VersionedTransaction.deserialize(Buffer.from(res.transaction, 'base64'));
+  const signed = await window.solana.signTransaction(tx);
+  const { connection } = await import('./wallet.js');
+  const sig = await connection.sendRawTransaction(signed.serialize(), { skipPreflight: false });
+  console.log(`[jupUSD] withdrew ${amountUsdc} USDC sig:`, sig);
+  return sig;
+}
+
+export async function swapJupUSDtoJLP(amountJupUSD) {
+  if (!walletPublicKey) throw new Error("Wallet not connected");
+  if (isSimulation) {
+    await new Promise((r) => setTimeout(r, 1200));
+    return "SIM" + Math.random().toString(36).slice(2, 10).toUpperCase();
+  }
+  const amountRaw = Math.round(amountJupUSD * 1_000_000);
+  const params = new URLSearchParams({ inputMint: JUPUSD_MINT, outputMint: JLP_MINT, amount: amountRaw.toString(), taker: walletPublicKey.toBase58(), slippageBps: "50" });
+  const order = await withRetry(() => jupiterFetch(`/swap/v2/order?${params}`));
+  if (order.error || !order.transaction) throw new Error(`jupUSD→JLP swap: ${order.error ?? 'no transaction'}`);
+  const tx = VersionedTransaction.deserialize(Buffer.from(order.transaction, 'base64'));
+  const signed = await window.solana.signTransaction(tx);
+  const signedB64 = Buffer.from(signed.serialize()).toString('base64');
+  const result = await withRetry(() => jupiterFetch('/swap/v2/execute', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ signedTransaction: signedB64, requestId: order.requestId }) }));
+  if (result.status !== 'Success') throw new Error(`jupUSD→JLP failed: ${result.error ?? 'unknown'}`);
+  console.log(`[jupUSD→JLP] swapped ${amountJupUSD} sig:`, result.signature);
   return result.signature;
 }
 

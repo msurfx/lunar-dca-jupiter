@@ -40,7 +40,7 @@ window.launchDCA = async () => {
   }
 
 // Full moon → deposit USDC into jupUSD on Jupiter Lend
-if (phase.id === 'full' && jlpEnabled) {
+if (phase.id === 'wan' && jlpEnabled) {
   setBtn(btn, "🌕 Depositing to jupUSD...", 0.7);
   try {
     const sig = await depositToJupUSD(amountUsdc);
@@ -250,7 +250,28 @@ window.addEventListener("DOMContentLoaded", () => {
   loadJLPApy();
   setInterval(fetchWalletBalances, 30_000);
   setInterval(refreshDCAOrders, 30_000);
+  setInterval(() => runAutoPilot(), 30 * 60 * 1000);
 });
+
+async function runAutoPilot() {
+  const phase = getLunarPhase();
+  const last = localStorage.getItem('ms_last_phase');
+  if (phase.id === last) return; // no change
+  const amt = parseFloat(document.getElementById('dca-amt')?.value) || 1;
+  const jlp = document.getElementById('jlp-tog')?.classList.contains('on');
+  await window.launchDCA({ phase, amountUsdc: amt, jlpEnabled: jlp });
+  localStorage.setItem('ms_last_phase', phase.id);
+}
+
+function getLunarPhase(date = new Date()) {
+  const EPOCH = new Date("2000-01-06T18:14:00Z");
+  const elapsed = (date - EPOCH) / 86400000;
+  const pct = ((elapsed % 29.53059) / 29.53059 + 1) % 1;
+  if (pct < 0.125) return { id: 'new',  pct };
+  if (pct < 0.50)  return { id: 'wax',  pct };
+  if (pct < 0.625) return { id: 'full', pct };
+  return                  { id: 'wan',  pct };
+}
 
 // ── Performance panel ────────────────────────────────────────────────────────
 function updatePerfPanel() {

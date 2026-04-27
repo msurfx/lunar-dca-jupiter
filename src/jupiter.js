@@ -2,7 +2,7 @@
 // Retryable codes per the integrating-jupiter skill error table.
 const RETRYABLE_CODES = new Set([-1, -1000, -1001, -1004, -2000, -2001, -2003, -2004, 429]);
 
-const BASE = "https://api.jup.ag";
+const BASE = "/api/proxy?path=";
 
 function apiKey() {
   return import.meta.env.VITE_JUP_API_KEY || "";

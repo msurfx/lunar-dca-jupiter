@@ -1,7 +1,7 @@
 import { Connection, PublicKey } from "@solana/web3.js";
 
 export const connection = new Connection(
-  import.meta.env.VITE_HELIUS_RPC_URL,
+  "/api/rpc",
   "confirmed"
 );
 
